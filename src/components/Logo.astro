@@ -1,0 +1,25 @@
+---
+// Vector Elara logo (traced from the supplied PNG). Recolour with --logo-main and --logo-accent.
+import raw from '../assets/brand/logo.svg?raw';
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: cls, label } = Astro.props;
+const svg = raw.replace('<svg ', `<svg class="logo-svg" focusable="false" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'} `);
+---
+
+<span class:list={['logo', cls]} set:html={svg} />
+
+<style>
+  .logo {
+    display: block;
+    line-height: 0;
+  }
+  .logo :global(.logo-svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

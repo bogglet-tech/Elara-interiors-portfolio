@@ -186,33 +186,40 @@ export const categories = [
 export const process = [
   {
     name: 'Consultation',
+    icon: 'consult',
     text: 'We visit your home, take measurements and listen to how your family uses each room. Budget and priorities are agreed here.',
   },
   {
     name: 'Interior design',
+    icon: 'drawing',
     text: 'You get room-by-room layouts with materials and finishes to choose from. We revise until the plan feels right.',
   },
   {
     name: 'Production',
+    icon: 'production',
     text: 'Cabinets, wardrobes and furniture are made to your measurements in the materials you approved.',
   },
   {
-    name: 'Execution',
-    text: 'Our team installs everything on site, with one coordinator keeping you updated at every stage.',
+    name: 'Delivery and installation',
+    icon: 'truck',
+    text: 'Materials arrive on schedule and our team installs everything, with one coordinator keeping you updated.',
   },
   {
-    name: 'After-sales service',
-    text: 'If something needs adjusting after you move in, call us and we come back to set it right.',
+    name: 'Handover and after-sales',
+    icon: 'key',
+    text: 'We hand over a finished home, and come back if anything needs adjusting after you move in.',
   },
 ];
 
 /* ---------- Why Elara (drawn from the company description) ---------- */
 
+// Stat strip under the hero. Facts from the client brief only: swap in real figures
+// (years of experience, projects completed, warranty) when Elara provides them.
 export const promises = [
-  { icon: 'team', title: 'One team, start to finish', text: 'Design, production and installation' },
-  { icon: 'ruler', title: 'Made to measure', text: 'Built for your exact room sizes' },
-  { icon: 'gem', title: 'Quality materials', text: 'Boards, hardware and finishes that last' },
-  { icon: 'support', title: 'After-sales service', text: 'We come back if anything needs fixing' },
+  { icon: 'clock', value: '5 stages', label: 'Consultation to handover' },
+  { icon: 'drawing', value: '100%', label: 'Made to measure' },
+  { icon: 'check', value: 'One team', label: 'Design to installation' },
+  { icon: 'calendar', value: '₹5 Lakh', label: 'Complete 2 BHK package' },
 ];
 
 export const highlights = [

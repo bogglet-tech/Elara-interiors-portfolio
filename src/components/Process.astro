@@ -1,4 +1,6 @@
 ---
+// Five-stage process, DLife-style: icon circles joined by arrows (vertical timeline on mobile).
+import Icon from './Icon.astro';
 import { process } from '../data/content';
 
 interface Props {
@@ -6,92 +8,202 @@ interface Props {
   intro?: string;
 }
 const {
-  title = 'How your home comes together',
+  title = 'Fully customised home interiors, by experts',
   intro = 'Five stages, one team and one point of contact, so you always know what happens next.',
 } = Astro.props;
+type IconName = Parameters<typeof Icon>[0]['name'];
 ---
 
-<section class="section dark pr" aria-labelledby="pr-title">
+<section class="section white pr" aria-labelledby="pr-title">
   <div class="wrap">
-    <div class="head">
+    <div class="pr__head">
       <h2 id="pr-title">{title}</h2>
-      <div class="head__aside">
-        <p>{intro}</p>
-        <a class="btn btn--sand" href="/contact#enquiry">Book a consultation</a>
-      </div>
+      <p>{intro}</p>
     </div>
 
     <ol class="pr__list" role="list">
       {
         process.map((s, i) => (
-          <li class="pr__step">
-            <span class="pr__num" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <h3>
-              <span class="visually-hidden">Step {i + 1}: </span>
-              {s.name}
-            </h3>
-            <p>{s.text}</p>
+          <li class:list={['pr__step', { 'pr__step--solid': i % 2 === 0 }]}>
+            <div class="pr__mark">
+              <span class="pr__circle">
+                <Icon name={s.icon as IconName} />
+              </span>
+              {i < process.length - 1 && (
+                <span class="pr__arrow" aria-hidden="true">
+                  <svg viewBox="0 0 16 24">
+                    <path d="M3 3l10 9-10 9" />
+                  </svg>
+                </span>
+              )}
+            </div>
+            <div class="pr__text">
+              <span class="pr__num">Step {i + 1}</span>
+              <h3>{s.name}</h3>
+              <p>{s.text}</p>
+            </div>
           </li>
         ))
       }
     </ol>
+
+    <div class="pr__cta">
+      <a class="btn" href="/contact#enquiry">Book a free consultation</a>
+    </div>
   </div>
 </section>
 
 <style>
+  .pr__head {
+    max-width: 46rem;
+    margin: 0 auto clamp(3rem, 2rem + 3vw, 5rem);
+    text-align: center;
+  }
+  .pr__head h2 {
+    margin-bottom: 1.25rem;
+    font-size: var(--fs-xl);
+  }
+  .pr__head p {
+    margin: 0 auto;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
   .pr__list {
+    --size: clamp(104px, 4vw + 64px, 132px);
     display: grid;
     margin: 0;
     padding: 0;
     list-style: none;
-    border-top: 1px solid var(--line-dark);
   }
   @media (min-width: 1000px) {
     .pr__list {
       grid-template-columns: repeat(5, 1fr);
     }
   }
-  .pr__step {
-    display: grid;
-    grid-template-columns: 4.5rem 1fr;
-    gap: 0.25rem 1rem;
-    padding: 1.75rem 0;
-    border-bottom: 1px solid var(--line-dark);
+
+  /* circle + connector */
+  .pr__mark {
+    position: relative;
+    display: flex;
+    justify-content: center;
   }
-  @media (min-width: 1000px) {
-    .pr__step {
-      display: block;
-      padding: 2rem 1.75rem 0 0;
-      border-bottom: 0;
-    }
-    .pr__step + .pr__step {
-      padding-left: 1.75rem;
-      border-left: 1px solid var(--line-dark);
-    }
+  .pr__circle {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--size);
+    aspect-ratio: 1;
+    border: 1px solid var(--sand);
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--mocha);
+    transition:
+      background-color 0.4s var(--ease),
+      color 0.4s var(--ease),
+      transform 0.4s var(--ease);
+  }
+  .pr__step--solid .pr__circle {
+    border-color: var(--mocha);
+    background: var(--mocha);
+    color: var(--cream);
+  }
+  .pr__step:hover .pr__circle {
+    transform: translateY(-4px);
+  }
+  .pr__circle :global(svg) {
+    width: 42%;
+    height: 42%;
+    stroke-width: 1.1;
+  }
+  /* thin sand line from this circle to the next, with a chevron at its end */
+  .pr__arrow {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + var(--size) / 2 + 10px);
+    right: calc(-50% + var(--size) / 2 + 10px);
+    height: 1px;
+    background: var(--sand);
+  }
+  .pr__arrow svg {
+    position: absolute;
+    right: -2px;
+    top: -12px;
+    width: 16px;
+    height: 24px;
+    fill: none;
+    stroke: var(--sand);
+    stroke-width: 1.2;
+  }
+
+  .pr__text {
+    padding: 1.75rem 0.75rem 0;
+    text-align: center;
   }
   .pr__num {
-    grid-row: span 2;
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 2rem + 2vw, 4rem);
-    line-height: 0.9;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
     color: var(--sand);
   }
-  @media (min-width: 1000px) {
-    .pr__num {
-      display: block;
-      margin-bottom: 2.5rem;
-    }
-  }
-  .pr__step h3 {
+  .pr__text h3 {
     margin-bottom: 0.6rem;
     font-size: var(--fs-md);
   }
-  .pr__step p {
-    margin: 0;
+  .pr__text p {
+    max-width: 26ch;
+    margin: 0 auto;
     font-size: var(--fs-sm);
     font-weight: 300;
-    color: rgba(247, 239, 232, 0.7);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  /* Mobile / tablet: vertical timeline */
+  @media (max-width: 999px) {
+    .pr__list {
+      --size: 76px;
+      max-width: 34rem;
+      margin-inline: auto;
+    }
+    .pr__step {
+      display: grid;
+      grid-template-columns: var(--size) 1fr;
+      gap: 1.5rem;
+      padding-bottom: 2.25rem;
+    }
+    .pr__mark {
+      align-items: flex-start;
+    }
+    .pr__arrow {
+      top: calc(var(--size) + 8px);
+      bottom: calc(-2.25rem - 8px);
+      left: calc(50% - 0.5px);
+      right: auto;
+      width: 1px;
+      height: auto;
+    }
+    .pr__arrow svg {
+      display: none;
+    }
+    .pr__step:last-child .pr__mark::after {
+      display: none;
+    }
+    .pr__text {
+      padding: 0.6rem 0 0;
+      text-align: left;
+    }
+    .pr__text p {
+      margin: 0;
+      max-width: none;
+    }
+  }
+
+  .pr__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
   }
 </style>

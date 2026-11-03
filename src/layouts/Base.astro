@@ -9,56 +9,55 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import QuickContact from '../components/QuickContact.astro';
 import { site } from '../data/site';
-import { packages, photos } from '../data/content';
+import { photos } from '../data/content';
+import { buildGraph, type PageKind } from '../lib/seo';
 import logo from '../assets/brand/logo.png';
 
 interface Props {
   title: string;
   description: string;
   ogImage?: ImageMetadata;
+  /** Alt text for the social share image */
+  ogImageAlt?: string;
   /** Extra JSON-LD objects for this page (e.g. FAQPage). */
   schema?: Record<string, unknown>[];
+  /** Transparent header over a full-bleed hero (home page). */
+  overlayHeader?: boolean;
+  /** schema.org page type */
+  kind?: PageKind;
+  /** Keep this page out of search results (404 etc.) */
+  noindex?: boolean;
 }
 
-const { title, description, ogImage = photos.heroTeakBedroom, schema = [] } = Astro.props;
-const fullTitle = title === site.name ? `${site.name} | Home interior designers` : `${title} | ${site.name}`;
-const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
+const {
+  title,
+  description,
+  ogImage = photos.heroTeakBedroom,
+  ogImageAlt = 'A home interior designed by Elara Interiors',
+  schema = [],
+  overlayHeader = false,
+  kind = 'WebPage',
+  noindex = false,
+} = Astro.props;
+const siteUrl = Astro.site!;
+const isHome = title === site.name;
+const fullTitle = isHome ? `${site.name} | Home interior designers for apartments and villas` : `${title} | ${site.name}`;
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const canonical = new URL(path, siteUrl).href;
 const og = await getImage({ src: ogImage, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
-const ogUrl = new URL(og.src, Astro.site).href;
+const ogUrl = new URL(og.src, siteUrl).href;
 const logoImg = await getImage({ src: logo, width: 600, format: 'png' });
+const logoUrl = new URL(logoImg.src, siteUrl).href;
 
-const business = {
-  '@context': 'https://schema.org',
-  '@type': 'HomeAndConstructionBusiness',
-  '@id': new URL('/#business', Astro.site).href,
-  name: site.name,
-  description: site.description,
-  url: Astro.site?.href,
-  logo: new URL(logoImg.src, Astro.site).href,
-  image: ogUrl,
-  telephone: site.phoneDisplay.replace(/\s/g, ''),
-  email: site.email,
-  priceRange: '₹₹',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.address.street,
-    addressLocality: site.address.locality,
-    addressRegion: site.address.region,
-    postalCode: site.address.postalCode,
-    addressCountry: site.address.country,
-  },
-  openingHours: site.hours.map((h) => h.schema).filter(Boolean),
-  sameAs: site.socials.map((s) => s.href),
-  knowsAbout: ['Home interior design', 'Modular kitchens', 'Bedroom interiors', 'Wardrobes', 'Living and dining interiors', 'Bespoke furniture'],
-  makesOffer: packages.map((p) => ({
-    '@type': 'Offer',
-    name: p.title,
-    description: p.summary,
-    price: p.price,
-    priceCurrency: 'INR',
-    url: new URL(`/services#packages`, Astro.site).href,
-  })),
-};
+const breadcrumb = isHome
+  ? [{ name: 'Home', url: siteUrl.href }]
+  : [
+      { name: 'Home', url: siteUrl.href },
+      { name: title, url: canonical },
+    ];
+const graph = buildGraph({ siteUrl, pageUrl: canonical, title: fullTitle, description, imageUrl: ogUrl, logoUrl, kind, breadcrumb });
+const hasGeo = site.geo.lat !== null && site.geo.lng !== null;
+const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 ---
 
 <!doctype html>
@@ -68,32 +67,53 @@ const business = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical.href} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en-IN" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+    <meta name="author" content={site.name} />
     <meta name="theme-color" content="#f7efe8" />
+    <meta name="format-detection" content="telephone=yes" />
     <script is:inline>document.documentElement.classList.add("js")</script>
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" title="LLM summary" href="/llms.txt" />
+
+    <!-- Local GEO: only rendered once real coordinates are set in src/data/site.ts -->
+    <meta name="geo.region" content={site.regionCode} />
+    {site.address.locality !== 'City' && <meta name="geo.placename" content={site.address.locality} />}
+    {hasGeo && <meta name="geo.position" content={`${site.geo.lat};${site.geo.lng}`} />}
+    {hasGeo && <meta name="ICBM" content={`${site.geo.lat}, ${site.geo.lng}`} />}
+
+    {site.verification.google && <meta name="google-site-verification" content={site.verification.google} />}
+    {site.verification.bing && <meta name="msvalidate.01" content={site.verification.bing} />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical.href} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="en_IN" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
     {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <Header overlay={overlayHeader} />
     <main id="main">
       <slot />
     </main>

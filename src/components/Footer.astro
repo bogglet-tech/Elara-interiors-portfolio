@@ -1,12 +1,11 @@
 ---
-import { Image } from 'astro:assets';
-import logoWhite from '../assets/brand/logo-white.png';
 import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 import { site, nav, whatsappLink, fullAddress } from '../data/site';
 import { categories } from '../data/content';
 
 const year = new Date().getFullYear();
-const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'facebook' | 'youtube';
+const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'facebook' | 'youtube' | 'pinterest' | 'linkedin';
 ---
 
 <footer class="ftr dark">
@@ -22,16 +21,22 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
     <div class="ftr__grid">
       <div class="ftr__about">
         <p>Complete home interiors for apartments, villas and independent homes, designed around the people who live in them.</p>
+        <p class="ftr__follow">Follow our work</p>
         <ul class="ftr__social" role="list">
           {
             site.socials.map((s) => (
               <li>
-                <a href={s.href} target="_blank" rel="noopener" aria-label={s.label}>
+                <a href={s.href} target="_blank" rel="noopener" aria-label={`Elara Interiors on ${s.label}`} title={s.label}>
                   <Icon name={socialIcon(s.label)} />
                 </a>
               </li>
             ))
           }
+          <li>
+            <a href={whatsappLink()} target="_blank" rel="noopener" aria-label="Chat with Elara Interiors on WhatsApp" title="WhatsApp">
+              <Icon name="whatsapp" />
+            </a>
+          </li>
         </ul>
       </div>
       <nav aria-label="Footer">
@@ -55,7 +60,7 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
   </div>
 
   <div class="ftr__mark" aria-hidden="true">
-    <Image src={logoWhite} alt="" width={1400} />
+    <Logo />
   </div>
 
   <div class="wrap ftr__base">
@@ -93,7 +98,7 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
   .ftr__top {
     display: grid;
     gap: 2rem;
-    padding-bottom: clamp(3rem, 2rem + 3vw, 5rem);
+    padding-bottom: clamp(2rem, 1.5rem + 1.5vw, 3rem);
     border-bottom: 1px solid var(--line-dark);
   }
   @media (min-width: 900px) {
@@ -114,7 +119,7 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
   .ftr__grid {
     display: grid;
     gap: 2.5rem;
-    padding-block: clamp(3rem, 2rem + 3vw, 4.5rem);
+    padding-block: clamp(4.5rem, 3rem + 4.5vw, 7rem) clamp(3rem, 2rem + 3vw, 4.5rem);
   }
   @media (min-width: 640px) {
     .ftr__grid {
@@ -137,38 +142,62 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
   .ftr__about p {
     max-width: 34ch;
   }
+  .ftr__follow {
+    margin: 1.75rem 0 0.75rem;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+    color: var(--sand);
+  }
   .ftr__social {
     display: flex !important;
-    gap: 0.5rem !important;
-    margin-top: 1.5rem !important;
+    flex-wrap: wrap;
+    gap: 0.6rem !important;
   }
   .ftr__social a {
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--line-dark);
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgb(188 154 119 / 0.55);
     border-radius: 50%;
+    color: var(--cream) !important;
+    transition:
+      background-color 0.25s var(--ease),
+      color 0.25s var(--ease),
+      transform 0.25s var(--ease);
   }
   .ftr__social a:hover {
-    background: var(--cream);
-    color: var(--espresso);
+    background: var(--sand);
+    border-color: var(--sand);
+    color: var(--espresso) !important;
+    transform: translateY(-2px);
   }
   .ftr__social :global(svg) {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
   }
 
+  /* Faint watermark behind the footer menus (no space of its own), sized to the content width */
+  .ftr > :not(.ftr__mark) {
+    position: relative;
+    z-index: 1;
+  }
   .ftr__mark {
-    padding-inline: var(--gutter);
-    max-width: calc(var(--max) + var(--gutter) * 2);
-    margin-inline: auto;
-    opacity: 0.07;
+    --logo-main: var(--cream);
+    --logo-accent: var(--cream);
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(calc(100% - var(--gutter)), calc(var(--max) + 22rem));
+    transform: translate(-50%, 6%);
+    opacity: 0.05;
     pointer-events: none;
   }
-  .ftr__mark :global(img) {
-    width: 100%;
-    height: auto;
+  @media (max-width: 860px) {
+    .ftr__mark {
+      bottom: 62px; /* sit above the fixed mobile contact bar */
+      transform: translate(-50%, 0);
+    }
   }
   .ftr__base {
     display: flex;
@@ -184,6 +213,11 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
   .ftr__base ul {
     display: flex;
     gap: 1.5rem;
+  }
+  @media (min-width: 861px) {
+    .ftr__base {
+      padding-right: calc(var(--gutter) + 4.5rem); /* clear the floating WhatsApp button */
+    }
   }
   @media (max-width: 860px) {
     .ftr__base {

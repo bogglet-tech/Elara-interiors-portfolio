@@ -5,11 +5,13 @@ import PageBanner from '../components/PageBanner.astro';
 import Process from '../components/Process.astro';
 import ConsultBand from '../components/ConsultBand.astro';
 import logoWhite from '../assets/brand/logo-white.png';
-import logo from '../assets/brand/logo.png';
+import Logo from '../components/Logo.astro';
+import logoMask from '../assets/brand/logo.svg?url';
 import { photos, highlights } from '../data/content';
 ---
 
 <Base
+  kind="AboutPage"
   title="About us"
   description="Elara Interiors is a contemporary interior design company creating personal, functional homes for apartments, villas and independent houses. Read our story, vision and mission."
   ogImage={photos.loungeDark}
@@ -52,7 +54,10 @@ import { photos, highlights } from '../data/content';
   <!-- Brand book "Vision / Mission" slide -->
   <section class="vm white" aria-label="Vision and mission">
     <div class="vm__band">
-      <Image src={logo} alt="" width={420} densities={[1, 2]} class="vm__logo" />
+      <div class="vm__logo" style={`--logo-mask: url(${logoMask})`}>
+        <Logo label="Elara Interiors" />
+        <span class="vm__shine" aria-hidden="true"></span>
+      </div>
     </div>
     <div class="wrap vm__grid">
       <div class="vm__col">
@@ -148,9 +153,41 @@ import { photos, highlights } from '../data/content';
     padding-block: clamp(3rem, 2rem + 4vw, 6rem);
     background: var(--stone);
   }
-  .vm__band :global(.vm__logo) {
+  .vm__logo {
+    position: relative;
     width: clamp(220px, 30vw, 420px);
-    height: auto;
+  }
+  /* a soft band of light sweeps across the letters only (masked to the logo shape), then rests */
+  .vm__shine {
+    position: absolute;
+    inset: 0;
+    -webkit-mask: var(--logo-mask) center / contain no-repeat;
+    mask: var(--logo-mask) center / contain no-repeat;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgb(255 246 230 / 0.35) 40%,
+      rgb(255 250 242 / 0.95) 50%,
+      rgb(255 246 230 / 0.35) 60%,
+      transparent 70%
+    );
+    background-size: 250% 100%;
+    background-position: 120% 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .vm__shine {
+      animation: vm-shine 4.5s var(--ease) 0.6s infinite;
+    }
+  }
+  @keyframes vm-shine {
+    0% {
+      background-position: 120% 0;
+    }
+    45%,
+    100% {
+      background-position: -20% 0;
+    }
   }
   .vm__grid {
     display: grid;

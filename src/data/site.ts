@@ -22,6 +22,16 @@ export const site = {
   },
   mapQuery: 'Elara Interiors', // TODO: exact address or Google Maps place name
 
+  /* ---- SEO / local GEO ---- */
+  // Map coordinates of the studio. Geo meta tags and schema GeoCoordinates only render once both are set.
+  geo: { lat: null as number | null, lng: null as number | null }, // TODO e.g. { lat: 9.9312, lng: 76.2673 }
+  regionCode: 'IN', // TODO: ISO 3166-2 once the state is known, e.g. 'IN-KL'
+  areaServed: ['City'], // TODO: cities / districts served, e.g. ['Kochi', 'Thrissur', 'Kottayam']
+  languages: ['English'], // TODO: add 'Malayalam', 'Hindi', etc. if the team speaks them
+  priceRange: '₹₹',
+  // Search engine verification codes (leave empty until you have them)
+  verification: { google: '', bing: '' }, // TODO
+
   hours: [
     { days: 'Monday to Saturday', time: '9:30 am to 6:30 pm', schema: 'Mo-Sa 09:30-18:30' }, // TODO
     { days: 'Sunday', time: 'By appointment', schema: '' },
@@ -32,6 +42,8 @@ export const site = {
     { label: 'Instagram', href: 'https://www.instagram.com/' },
     { label: 'Facebook', href: 'https://www.facebook.com/' },
     { label: 'YouTube', href: 'https://www.youtube.com/' },
+    { label: 'Pinterest', href: 'https://www.pinterest.com/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
   ],
 };
 

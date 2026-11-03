@@ -2,6 +2,7 @@
 import { Picture, Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
 import Packages from '../components/Packages.astro';
 import Process from '../components/Process.astro';
 import ConsultBand from '../components/ConsultBand.astro';
@@ -10,103 +11,94 @@ import { site, whatsappLink } from '../data/site';
 import { photos, categories, promises, gallery } from '../data/content';
 
 const slides = [
-  { image: photos.goldenLiving, caption: 'Double-height living room', alt: 'Double-height living room with marble floor, cream sectional sofa and golden cove lighting' },
+  { image: photos.livingDark, caption: 'Living room with a dark feature wall', alt: 'Living room with a dark feature wall, low sofa and framed art' },
   { image: photos.heroTeakBedroom, caption: 'Teak-panelled master bedroom', alt: 'Bedroom with teak wall panelling, warm cove lighting and a dark wooden bed' },
-  { image: photos.loungeDark, caption: 'Lounge with a dark palette', alt: 'Tall lounge with dark walls, a low sofa and a pendant light' },
   { image: photos.bedroomSlats, caption: 'Bedroom with wooden wall slats', alt: 'Bedroom with dark wooden wall slats and warm bedside lighting' },
+  { image: photos.bedroomSunlit, caption: 'Sunlit guest bedroom', alt: 'Bedroom with wooden floor, low bed and evening sun through tall windows' },
 ];
-const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], gallery[12], gallery[7]];
+const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], gallery[12]];
 ---
 
 <Base
+  overlayHeader
   title={site.name}
   description="Elara Interiors designs complete home interiors for apartments, villas and independent homes: modular kitchens, bedrooms, wardrobes, living and dining spaces. Complete 2 BHK interiors for ₹5,00,000."
 >
-  <!-- 1. Hero: the brand book cover, as a page -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__grid">
-      <div class="hero__copy">
+  <!-- 1. Hero: full-bleed photo, the logo centred; on scroll it flies into the navbar -->
+  <!-- Lives outside the sticky hero: a sticky element is its own stacking context, which would trap the logo under the navbar -->
+  <a href="/" class="fly" data-fly aria-label="Elara Interiors home"><Logo /></a>
+
+  <div class="hero-wrap" data-hero-wrap>
+  <section class="hero dark" aria-labelledby="hero-title" data-hero data-slider>
+    <div class="hero__slides" aria-roledescription="carousel" aria-label="Featured rooms">
+      {
+        slides.map((s, i) => (
+          <figure class="hero__slide cover" data-slide aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}: ${s.caption}`} data-active={i === 0 ? '' : undefined}>
+            <Picture
+              src={s.image}
+              alt={s.alt}
+              widths={[640, 1024, 1440, 2000]}
+              sizes="100vw"
+              formats={['avif', 'webp']}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'auto'}
+            />
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="hero__cue" aria-hidden="true"><span>Scroll</span><i></i></p>
+
+    <div class="wrap hero__content">
+      <div class="hero__text">
         <h1 id="hero-title">Designed for the way you live</h1>
-        <p class="lede">
+        <p class="hero__lede">
           Complete interiors for apartments, villas and independent homes. Planned room by room, made to measure and
           installed by one team.
         </p>
         <div class="actions">
-          <a class="btn" href="/contact#enquiry">Get a free estimate</a>
-          <a class="btn btn--line" href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />Chat on WhatsApp</a>
+          <a class="btn btn--sand" href="/contact#enquiry">Get a free estimate</a>
+          <a class="btn btn--ghost-light" href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />Chat on WhatsApp</a>
         </div>
-        <p class="hero__offer">
-          Complete 2 BHK interiors from <strong>₹5,00,000</strong>
-          <a href="#packages" class="link">See packages</a>
-        </p>
       </div>
 
-      <div class="hero__art">
-        <div class="hero__square cover">
-          <Picture
-            src={photos.sofaCorner}
-            alt="Low beige sofa with soft throws beside a dark wooden wall"
-            widths={[300, 589]}
-            sizes="(min-width: 1000px) 22vw, 40vw"
-            formats={['avif', 'webp']}
-            loading="eager"
-          />
-        </div>
-        <p class="hero__tagline">
-          A thoughtfully designed space is where beauty meets comfort, and every detail tells a story.
-        </p>
-
-        <div class="hero__slider" data-slider aria-roledescription="carousel" aria-label="Featured rooms">
-          {
-            slides.map((s, i) => (
-              <figure
-                class="hero__slide cover"
-                data-slide
-                aria-roledescription="slide"
-                aria-label={`${i + 1} of ${slides.length}`}
-                data-active={i === 0 ? '' : undefined}
-              >
-                <Picture
-                  src={s.image}
-                  alt={s.alt}
-                  widths={[480, 720, 1000, 1300]}
-                  sizes="(min-width: 1000px) 34vw, 100vw"
-                  formats={['avif', 'webp']}
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  fetchpriority={i === 0 ? 'high' : 'auto'}
-                />
-                <figcaption>{s.caption}</figcaption>
-              </figure>
-            ))
-          }
-          <div class="hero__ctrl">
-            <button type="button" class="hero__pause" data-pause aria-label="Pause slideshow" aria-pressed="false">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5l11 7-11 7Z" /></svg>
+      <div class="hero__side">
+        <a class="hero__offer" href="#packages">
+          <span>Complete 2 BHK interiors</span>
+          <strong>₹5,00,000</strong>
+          <span class="hero__offer-link">See packages</span>
+        </a>
+        <div class="hero__ctrl">
+          <button type="button" class="hero__pause" data-pause aria-label="Pause slideshow" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5l11 7-11 7Z" /></svg>
+          </button>
+          {slides.map((sl, i) => (
+            <button type="button" class="hero__dot" data-dot={i} aria-label={`Show photo ${i + 1}: ${sl.caption}`} aria-current={i === 0 ? 'true' : undefined}>
+              <span />
             </button>
-            {slides.map((_, i) => (
-              <button type="button" class="hero__dot" data-dot={i} aria-label={`Show photo ${i + 1}`} aria-current={i === 0 ? 'true' : undefined}>
-                <span />
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </div>
+  </section>
+  </div>
 
-    <!-- 2. The brand cover's mocha bar, carrying DLife's promise strip -->
-    <ul class="promise mocha" role="list">
-      {
-        promises.map((p) => (
-          <li>
-            <Icon name={p.icon as 'team'} />
-            <div>
-              <strong>{p.title}</strong>
-              <span>{p.text}</span>
-            </div>
-          </li>
-        ))
-      }
-    </ul>
+  <!-- 2. Stat strip: icon, value, caption -->
+  <section class="promise" aria-label="Elara at a glance">
+    <div class="wrap">
+      <ul class="promise__list" role="list">
+        {
+          promises.map((p) => (
+            <li class="promise__item">
+              <Icon name={p.icon as 'clock'} class="promise__icon" />
+              <strong class="promise__value">{p.value}</strong>
+              <span class="promise__label">{p.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </section>
 
   <!-- 3. Package offers -->
@@ -214,8 +206,8 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     </div>
   </section>
 
-  <!-- 8. Our work rail -->
-  <section class="section work" aria-labelledby="work-title">
+  <!-- 8. Rooms showcase: one room in focus, the rest as narrow panels; auto-advances -->
+  <section class="section work" aria-labelledby="work-title" data-rooms>
     <div class="wrap">
       <div class="head">
         <h2 id="work-title">Rooms we’ve put together</h2>
@@ -223,29 +215,34 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
           <p>Kitchens, bedrooms and living spaces in warm, lasting materials.</p>
           <div class="work__nav">
             <a class="link" href="/gallery">Open the gallery</a>
-            <button type="button" class="work__btn" data-rail-prev aria-label="Scroll photos left"><Icon name="prev" /></button>
-            <button type="button" class="work__btn" data-rail-next aria-label="Scroll photos right"><Icon name="next" /></button>
+            <button type="button" class="work__btn" data-rm-prev aria-label="Previous room"><Icon name="prev" /></button>
+            <button type="button" class="work__btn work__btn--next" data-rm-next aria-label="Next room">
+              <svg class="work__ring" viewBox="0 0 50 50" aria-hidden="true"><circle cx="25" cy="25" r="23.5" /></svg>
+              <Icon name="next" />
+            </button>
           </div>
         </div>
       </div>
+
+      <ul class="rm" role="list" aria-roledescription="carousel" aria-label="Rooms">
+        {
+          rail.map((g, i) => (
+            <li class="rm__item" data-rm-item data-active={i === 0 ? '' : undefined} style={`--h: ${['100%', '64%', '84%', '50%', '74%', '58%'][i % 6]}`}>
+              <div class="rm__media cover">
+                <Picture src={g.image} alt={g.alt} widths={[400, 700, 1000]} sizes="(min-width: 900px) 50vw, 70vw" formats={['avif', 'webp']} />
+              </div>
+              <span class="rm__tag" aria-hidden="true">{g.room}</span>
+              <div class="rm__cap">
+                <span class="rm__room">{g.room}</span>
+                <h3>{g.caption}</h3>
+                <a class="rm__link" href="/gallery">Open in gallery</a>
+              </div>
+              <button type="button" class="rm__hit" data-rm-hit aria-label={`Show ${g.caption}`} />
+            </li>
+          ))
+        }
+      </ul>
     </div>
-    <ul class="rail" role="list" data-rail>
-      {
-        rail.map((g, i) => (
-          <li class:list={['rail__item', { 'rail__item--wide': i % 3 === 0 }]}>
-            <a href="/gallery">
-              <span class="rail__img cover">
-                <Picture src={g.image} alt={g.alt} widths={[420, 700, 1000]} sizes="(min-width: 900px) 34vw, 78vw" formats={['avif', 'webp']} />
-              </span>
-              <span class="rail__cap">
-                {g.caption}
-                <span>{g.room}</span>
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
   </section>
 
   <!-- 9. Consultation -->
@@ -253,152 +250,221 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
 </Base>
 
 <style>
-  /* ================= Hero ================= */
-  .hero__grid {
-    display: grid;
-    max-width: 1680px;
-    margin-inline: auto;
-  }
-  @media (min-width: 1000px) {
-    .hero__grid {
-      grid-template-columns: 1fr 1.08fr;
-      min-height: min(calc(100svh - var(--header-h) - 108px), 820px);
-    }
-  }
-  .hero__copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(2.5rem, 1.5rem + 4vw, 5rem) var(--gutter) clamp(3rem, 2rem + 3vw, 4rem);
-  }
-  @media (min-width: 1000px) {
-    .hero__copy {
-      padding-right: clamp(2rem, 4vw, 4rem);
-    }
-  }
-  .hero h1 {
-    max-width: 9ch;
-    margin-bottom: 1.5rem;
-    font-size: clamp(3rem, 1.4rem + 5.6vw, 6.25rem);
-    line-height: 0.98;
-    letter-spacing: -0.025em;
-  }
-  .hero .lede {
-    margin-bottom: 2.25rem;
-  }
-  .hero__offer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1.25rem;
-    margin: 2.75rem 0 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--line);
-    font-size: var(--fs-sm);
-    color: var(--muted);
-  }
-  .hero__offer strong {
-    font-weight: 500;
-    color: var(--mocha);
-  }
-
-  .hero__art {
+  /* ================= Hero =================
+     Pinned for one extra screen of scrolling, in three beats driven by JS:
+     1) only the photo + centred logo, 2) logo rises into the navbar (--p), 3) the copy appears (--c). */
+  .hero-wrap {
     position: relative;
-    display: grid;
-    grid-template-columns: 0.78fr 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 0 clamp(0.75rem, 1.2vw, 1.25rem);
+    height: 210svh;
   }
-  .hero__square {
-    aspect-ratio: 4 / 5;
-  }
-  .hero__tagline {
-    align-self: end;
-    margin: 0;
-    padding: 1.5rem 0 2.5rem;
-    font-size: var(--fs-sm);
-    line-height: 1.6;
-    color: var(--muted);
-    max-width: 26ch;
-  }
-  .hero__slider {
-    position: relative;
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    min-height: 100%;
+  .hero {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: flex-end;
+    height: 100svh;
+    min-height: 560px;
     overflow: hidden;
     background: var(--espresso);
   }
-  @media (max-width: 999px) {
-    .hero__art {
-      grid-template-columns: 1fr;
-      padding-inline: var(--gutter);
-    }
-    .hero__square,
-    .hero__tagline {
-      display: none;
-    }
-    .hero__slider {
-      grid-column: 1;
-      grid-row: 1;
-      aspect-ratio: 4 / 5;
-      min-height: 0;
+  :global(.js) .hero__content {
+    opacity: var(--c, 0);
+    transform: translateY(calc((1 - var(--c, 0)) * 32px));
+    visibility: var(--c-vis, hidden);
+  }
+  .hero__cue {
+    position: absolute;
+    left: 50%;
+    bottom: 2rem;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    transform: translateX(-50%);
+    color: rgb(247 239 232 / 0.8);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    opacity: calc(1 - var(--p, 0) * 2.5);
+  }
+  .hero__cue i {
+    position: relative;
+    width: 1px;
+    height: 44px;
+    overflow: hidden;
+    background: rgb(247 239 232 / 0.25);
+  }
+  .hero__cue i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+    transform: translateY(-100%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__cue i::after {
+      animation: cue 2s var(--ease) infinite;
     }
   }
+  @keyframes cue {
+    60%,
+    100% {
+      transform: translateY(100%);
+    }
+  }
+  :global(html:not(.js)) .hero__cue {
+    display: none;
+  }
+  .hero__slides,
   .hero__slide {
     position: absolute;
     inset: 0;
+  }
+  .hero__slide {
     margin: 0;
     opacity: 0;
-    transition: opacity 1.4s var(--ease);
+    transition: opacity 1.6s var(--ease);
   }
   .hero__slide[data-active] {
     opacity: 1;
   }
-  .hero__slide :global(picture) {
-    position: absolute;
-    inset: 0;
-  }
-  .hero__slide::after {
-    content: '';
-    position: absolute;
-    inset: 55% 0 0;
-    background: linear-gradient(to top, rgba(40, 26, 19, 0.65), transparent);
-  }
   @media (prefers-reduced-motion: no-preference) {
     .hero__slide[data-active] :global(img) {
-      animation: kenburns 7s linear both;
+      animation: kenburns 8s linear both;
     }
   }
   @keyframes kenburns {
     from {
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
     to {
       transform: scale(1);
     }
   }
-  .hero__slide figcaption {
+  /* darken top (navbar legibility) and bottom (copy legibility) */
+  .hero__slides::after {
+    content: '';
     position: absolute;
-    left: 1.5rem;
-    bottom: 4.25rem;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgb(30 19 13 / 0.5) 0%, rgb(30 19 13 / 0) 22%),
+      rgb(30 19 13 / 0.22);
+  }
+  .hero__slides::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     z-index: 1;
+    background: linear-gradient(to top, rgb(30 19 13 / 0.9) 0%, rgb(30 19 13 / 0.5) 40%, rgb(30 19 13 / 0.1) 70%);
+    opacity: var(--c, 1);
+  }
+  .hero__slides::after {
+    z-index: 1;
+  }
+
+  /* The flying logo. JS sets left/top/width to the navbar slot and drives transform + --p. */
+  .fly {
+    --logo-main: color-mix(in srgb, var(--mocha) calc(var(--h, 0) * 100%), var(--white));
+    position: fixed;
+    z-index: 60;
+    top: 18px;
+    left: var(--gutter);
+    width: 168px;
+    transform-origin: 0 0;
+  }
+  :global(.js) .fly:not([data-ready]) {
+    opacity: 0;
+  }
+  .fly[data-ready] {
+    transition: opacity 0.6s var(--ease);
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2rem;
+    padding-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+  @media (min-width: 861px) {
+    .hero__content {
+      padding-bottom: calc(clamp(1rem, 2vw, 2rem) + 54px + 1.5rem); /* clear the floating estimate button */
+    }
+  }
+  @media (min-width: 1000px) {
+    .hero__content {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+  }
+  .hero h1 {
+    max-width: 12ch;
+    margin-bottom: 1rem;
+    font-size: clamp(2.4rem, 1.3rem + 3.6vw, 4.75rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
     color: var(--cream);
+  }
+  .hero__lede {
+    max-width: 44ch;
+    margin-bottom: 1.75rem;
+    font-size: var(--fs-md);
+    font-weight: 300;
+    line-height: 1.55;
+    color: rgb(247 239 232 / 0.85);
+  }
+  @media (max-width: 640px) {
+    .hero__lede {
+      font-size: var(--fs-base);
+    }
+  }
+  .hero__side {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+  @media (min-width: 1000px) {
+    .hero__side {
+      justify-items: end;
+      text-align: right;
+    }
+  }
+  .hero__offer {
+    display: grid;
+    gap: 0.15rem;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  .hero__offer span:first-child {
     font-size: var(--fs-sm);
+    color: rgb(247 239 232 / 0.75);
+  }
+  .hero__offer strong {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--sand);
+  }
+  .hero__offer-link {
+    justify-self: inherit;
+    font-size: var(--fs-sm);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+    text-decoration-color: var(--sand);
+  }
+  @media (max-width: 999px) {
+    .hero__offer {
+      display: none;
+    }
   }
   .hero__ctrl {
-    position: absolute;
-    left: 1.5rem;
-    right: 6rem;
-    bottom: 1.25rem;
-    z-index: 2;
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
   .hero__dot {
-    flex: 1;
-    max-width: 64px;
+    width: 44px;
     height: 32px;
     padding: 0;
     border: 0;
@@ -408,7 +474,7 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
   .hero__dot span {
     display: block;
     height: 2px;
-    background: rgba(247, 239, 232, 0.35);
+    background: rgb(247 239 232 / 0.35);
     overflow: hidden;
   }
   .hero__dot span::after {
@@ -435,11 +501,11 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
   .hero__pause {
     display: grid;
     place-items: center;
+    flex: none;
     width: 36px;
     height: 36px;
-    margin-right: 0.75rem;
-    flex: none;
-    border: 1px solid rgba(247, 239, 232, 0.4);
+    margin-right: 0.5rem;
+    border: 1px solid rgb(247 239 232 / 0.4);
     border-radius: 50%;
     background: none;
     color: var(--cream);
@@ -465,56 +531,64 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     display: inline;
   }
 
-  /* Promise strip */
+  /* Stat strip */
   .promise {
+    padding-block: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+    background: var(--white);
+  }
+  .promise .wrap {
+    position: relative;
+  }
+  .promise .wrap::after {
+    content: '';
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: calc(-1 * clamp(2.5rem, 2rem + 2vw, 3.75rem));
+    height: 1px;
+    background: var(--line);
+  }
+  .promise__list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 3rem 1.5rem;
     margin: 0;
-    padding: 0.5rem var(--gutter);
+    padding: 0;
     list-style: none;
   }
-  @media (min-width: 1000px) {
-    .promise {
+  @media (min-width: 900px) {
+    .promise__list {
       grid-template-columns: repeat(4, 1fr);
-      padding: 0 max(var(--gutter), calc((100vw - var(--max)) / 2));
     }
   }
-  .promise li {
-    display: flex;
-    gap: 0.9rem;
-    align-items: flex-start;
-    padding: 1.25rem 1rem 1.25rem 0;
+  .promise__item {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    text-align: center;
   }
-  @media (min-width: 1000px) {
-    .promise li {
-      padding: 2.1rem 1.5rem;
-    }
-    .promise li + li {
-      border-left: 1px solid rgba(247, 239, 232, 0.16);
-    }
-    .promise li:first-child {
-      padding-left: 0;
-    }
-  }
-  .promise :global(svg) {
-    flex: none;
-    width: 28px;
-    height: 28px;
+  .promise__item :global(.promise__icon) {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 0.9rem;
     color: var(--sand);
-    stroke-width: 1.3;
+    stroke-width: 1.2;
   }
-  .promise strong {
-    display: block;
+  .promise__value {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--mocha);
+  }
+  .promise__label {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--cream);
-    line-height: 1.3;
-  }
-  .promise span {
-    display: block;
-    margin-top: 0.2rem;
-    font-size: var(--fs-xs);
-    color: rgba(247, 239, 232, 0.68);
-    line-height: 1.45;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   /* ================= Intro ================= */
@@ -721,7 +795,7 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     margin-bottom: 1.75rem;
   }
 
-  /* ================= Work rail ================= */
+  /* ================= Rooms showcase ================= */
   .work__nav {
     display: flex;
     align-items: center;
@@ -731,10 +805,11 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     margin-right: 1rem;
   }
   .work__btn {
+    position: relative;
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
     border: 1px solid var(--line);
     border-radius: 50%;
     background: none;
@@ -746,66 +821,278 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     background: var(--mocha);
     color: var(--cream);
   }
-  .work__btn :global(svg) {
+  .work__btn :global(svg:not(.work__ring)) {
     width: 20px;
     height: 20px;
   }
-  .rail {
+  /* countdown ring on the next button */
+  .work__ring {
+    position: absolute;
+    inset: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    transform: rotate(-90deg);
+    pointer-events: none;
+  }
+  .work__ring circle {
+    fill: none;
+    stroke: var(--mocha);
+    stroke-width: 1.5;
+    stroke-dasharray: 148;
+    stroke-dashoffset: 148;
+  }
+  [data-rm-playing] .work__ring circle {
+    animation: rm-ring var(--rm-dur, 5s) linear both;
+  }
+  @keyframes rm-ring {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .rm {
     display: flex;
-    gap: clamp(0.75rem, 1.5vw, 1.5rem);
+    align-items: flex-end;
+    gap: clamp(0.5rem, 1vw, 0.9rem);
+    height: clamp(420px, 30vw + 140px, 580px);
     margin: 0;
-    padding: 0 max(var(--gutter), calc((100vw - var(--max)) / 2));
+    padding: 0;
     list-style: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--max)) / 2));
-    scrollbar-width: none;
   }
-  .rail::-webkit-scrollbar {
-    display: none;
+  .rm__item {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    height: var(--h);
+    overflow: hidden;
+    transition:
+      flex-grow 0.9s var(--ease-out),
+      height 0.9s var(--ease-out);
   }
-  .rail__item {
-    flex: 0 0 auto;
-    width: min(62vw, 360px);
-    scroll-snap-align: start;
+  .rm__item[data-active] {
+    flex-grow: 6;
+    height: 100%;
   }
-  .rail__item--wide {
-    width: min(84vw, 620px);
-  }
-  .rail a {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
-  .rail__img {
-    display: block;
-    height: clamp(320px, 30vw + 120px, 520px);
-  }
-  .rail__img :global(picture) {
+
+  .rm__media {
     position: absolute;
     inset: 0;
   }
-  .rail__img :global(img) {
+  .rm__media :global(img) {
     transition: transform 1.2s var(--ease-out);
   }
-  .rail a:hover .rail__img :global(img) {
-    transform: scale(1.04);
+  .rm__item[data-active] .rm__media :global(img) {
+    transform: scale(1.03);
   }
-  .rail__cap {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.85rem;
-    font-size: var(--fs-sm);
-    color: var(--espresso);
+  /* inactive panels: dimmed; active: gradient under the caption */
+  .rm__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgb(40 26 19 / 0.5);
+    transition: background-color 0.6s var(--ease);
   }
-  .rail__cap span {
-    color: var(--muted);
+  .rm__item[data-active] .rm__media::after {
+    background: linear-gradient(to top, rgb(30 19 13 / 0.8) 0%, rgb(30 19 13 / 0) 45%);
+  }
+  .rm__item:not([data-active]):hover .rm__media::after {
+    background: rgb(40 26 19 / 0.3);
+  }
+
+  .rm__tag {
+    position: absolute;
+    left: 50%;
+    top: 1.25rem;
+    color: var(--cream);
     font-size: var(--fs-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    transform: translateX(-50%) rotate(180deg);
+    transform-origin: center;
+    transition: opacity 0.4s var(--ease);
+  }
+  .rm__item[data-active] .rm__tag {
+    opacity: 0;
+  }
+  .rm__cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+    color: var(--cream);
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.3s var(--ease),
+      transform 0.3s var(--ease);
+    pointer-events: none;
+  }
+  .rm__item[data-active] .rm__cap {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.6s 0.45s var(--ease),
+      transform 0.6s 0.45s var(--ease);
+    pointer-events: auto;
+  }
+  .rm__room {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sand);
+  }
+  .rm__cap h3 {
+    margin: 0.4rem 0 0.9rem;
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem);
+    color: var(--cream);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rm__link {
+    color: var(--cream);
+    font-size: var(--fs-sm);
+    text-decoration: underline;
+    text-decoration-color: var(--sand);
+    text-underline-offset: 0.3em;
+  }
+  .rm__hit {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .rm__item[data-active] .rm__hit {
+    display: none;
+  }
+  /* Mobile: the accordion turns vertical. Active room opens tall, the rest are slim strips. All rooms show. */
+  @media (max-width: 899px) {
+    .rm {
+      flex-direction: column;
+      align-items: stretch;
+      height: auto;
+      gap: 0.5rem;
+    }
+    .rm__item {
+      flex: none;
+      width: 100%;
+      height: 58px;
+    }
+    .rm__item[data-active] {
+      height: clamp(340px, 95vw, 440px);
+    }
+    .rm__tag {
+      left: 1.25rem;
+      top: 50%;
+      writing-mode: horizontal-tb;
+      transform: translateY(-50%);
+    }
+    .rm__cap h3 {
+      white-space: normal;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rm__item {
+      transition: none;
+    }
   }
 </style>
 
 <script>
+  /* Flying logo: centred and large over the hero, it shrinks into the navbar slot as you scroll.
+     --p (0 → 1) on :root also drives the header background and link colours. */
+  const fly = document.querySelector<HTMLElement>('[data-fly]');
+  const slot = document.querySelector<HTMLElement>('[data-logo-slot]');
+  const heroEl = document.querySelector<HTMLElement>('[data-hero]');
+  if (fly && slot && heroEl) {
+    const root = document.documentElement;
+    let S = { l: 0, t: 0, w: 168, h: 46 };
+    let ticking = false;
+    // ease-out: the logo lifts off immediately, so the scrolling headline never runs into it
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const wrap = document.querySelector<HTMLElement>('[data-hero-wrap]')!;
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const update = () => {
+      ticking = false;
+      const vw = root.clientWidth;
+      const vh = heroEl.offsetHeight;
+      const y = scrollY - wrap.offsetTop;
+      // beat 2: logo rises over the first ~40% of a screen; beat 3: copy fades in over the next ~35%
+      const e = ease(clamp(y / (vh * 0.4)));
+      const c = ease(clamp((y - vh * 0.45) / (vh * 0.35)));
+      const big = Math.min(vw * (vw < 700 ? 0.78 : 0.5), 760);
+      // Size by width (not scale) so the SVG re-renders crisp at every size.
+      const w = big + (S.w - big) * e;
+      const h = w * (S.h / S.w);
+      const cx = vw / 2 + (S.l + S.w / 2 - vw / 2) * e;
+      const cy = vh * 0.46 + (S.t + S.h / 2 - vh * 0.46) * e;
+      fly.style.width = `${w.toFixed(1)}px`;
+      fly.style.transform = `translate3d(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px, 0)`;
+      root.style.setProperty('--p', e.toFixed(3));
+      root.style.setProperty('--c', c.toFixed(3));
+      root.style.setProperty('--c-vis', c > 0.01 ? 'visible' : 'hidden');
+      // navbar: transparent for the whole pinned hero, cream once the hero starts scrolling away
+      const release = wrap.offsetHeight - vh;
+      const hBar = clamp((y - release) / (vh * 0.1));
+      root.style.setProperty('--h', hBar.toFixed(3));
+      // while on the hero, the floating WhatsApp button becomes a Free estimate button
+      const inHero = y < release + vh * 0.1;
+      root.classList.toggle('in-hero', inHero);
+      document.querySelector('.est')?.setAttribute('tabindex', inHero ? '0' : '-1');
+      document.querySelector('.est')?.setAttribute('aria-hidden', String(!inHero));
+    };
+    const measure = () => {
+      const r = slot.getBoundingClientRect();
+      S = { l: r.left, t: r.top, w: r.width, h: r.height };
+      Object.assign(fly.style, { left: '0px', top: '0px' });
+      update();
+    };
+    addEventListener('scroll', () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }, { passive: true });
+    addEventListener('resize', measure);
+    measure();
+    fly.setAttribute('data-ready', '');
+
+    /* Auto-play the hero: if the visitor hasn't scrolled after a few seconds, glide down so the logo docks
+       and the copy appears, then stop. Once per visit; any input cancels it; skipped for reduced motion. */
+    const AUTO_DELAY = 4000;
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches && scrollY < 4) {
+      let cancelled = false;
+      let raf = 0;
+      const cancel = () => {
+        cancelled = true;
+        window.clearTimeout(t);
+        cancelAnimationFrame(raf);
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => removeEventListener(ev, cancel));
+      };
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, cancel, { passive: true }));
+      const t = window.setTimeout(() => {
+        if (cancelled || scrollY > 4 || document.documentElement.style.overflow === 'hidden') return cancel();
+        const from = scrollY;
+        const to = heroEl.offsetHeight * 0.85; // copy fully visible, still inside the pinned hero
+        const dur = 2200;
+        const start = performance.now();
+        const easeInOut = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+        const step = (now: number) => {
+          if (cancelled) return;
+          const k = Math.min(1, (now - start) / dur);
+          window.scrollTo({ top: from + (to - from) * easeInOut(k), behavior: 'instant' });
+          if (k < 1) raf = requestAnimationFrame(step);
+          else cancel();
+        };
+        raf = requestAnimationFrame(step);
+      }, AUTO_DELAY);
+    }
+  }
+
   /* Hero slider: crossfade every 6s, pausable, starts paused for reduced motion */
   const slider = document.querySelector<HTMLElement>('[data-slider]');
   if (slider) {
@@ -870,11 +1157,60 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     });
   }
 
-  /* Work rail arrows */
-  const rail = document.querySelector<HTMLElement>('[data-rail]');
-  if (rail) {
-    const by = () => Math.min(rail.clientWidth * 0.8, 700);
-    document.querySelector('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -by(), behavior: 'smooth' }));
-    document.querySelector('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: by(), behavior: 'smooth' }));
+  /* Rooms showcase: one room in focus, auto-advances every 5s with a countdown ring on the next button.
+     Pauses on hover / keyboard focus, when off-screen, and for reduced motion. */
+  const rooms = document.querySelector<HTMLElement>('[data-rooms]');
+  if (rooms) {
+    const DUR = 5000;
+    rooms.style.setProperty('--rm-dur', `${DUR}ms`);
+    const all = [...rooms.querySelectorAll<HTMLElement>('[data-rm-item]')];
+    const visible = () => all.filter((el) => el.offsetParent !== null);
+    let timer: number | undefined;
+    let hovering = false;
+    let focused = false;
+    let inView = false;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const current = () => Math.max(0, visible().findIndex((el) => el.hasAttribute('data-active')));
+    const go = (n: number) => {
+      const v = visible();
+      const idx = (n + v.length) % v.length;
+      all.forEach((el) => el.toggleAttribute('data-active', el === v[idx]));
+      restart();
+    };
+    const stop = () => {
+      window.clearTimeout(timer);
+      rooms.removeAttribute('data-rm-playing');
+    };
+    const restart = () => {
+      stop();
+      if (reduce || hovering || focused || !inView) return;
+      void rooms.offsetWidth; // restart the ring animation
+      rooms.setAttribute('data-rm-playing', '');
+      timer = window.setTimeout(() => go(current() + 1), DUR);
+    };
+
+    rooms.querySelector('[data-rm-next]')?.addEventListener('click', () => go(current() + 1));
+    rooms.querySelector('[data-rm-prev]')?.addEventListener('click', () => go(current() - 1));
+    all.forEach((el) =>
+      el.querySelector('[data-rm-hit]')?.addEventListener('click', () => {
+        go(visible().indexOf(el));
+        // the click target disappears once the panel is active: keep focus inside on its link
+        el.querySelector<HTMLElement>('.rm__link')?.focus({ preventScroll: true });
+      }),
+    );
+
+    const list = rooms.querySelector('.rm')!;
+    list.addEventListener('mouseenter', () => { hovering = true; stop(); });
+    list.addEventListener('mouseleave', () => { hovering = false; restart(); });
+    list.addEventListener('focusin', () => { focused = true; stop(); });
+    list.addEventListener('focusout', (e) => {
+      if (list.contains((e as FocusEvent).relatedTarget as Node)) return;
+      focused = false;
+      restart();
+    });
+    new IntersectionObserver(([e]) => { inView = e.isIntersecting; restart(); }, { threshold: 0.35 }).observe(list);
+    // if the active item gets hidden by a breakpoint change, fall back to the first visible one
+    addEventListener('resize', () => { if (!visible().some((el) => el.hasAttribute('data-active'))) go(0); });
   }
 </script>

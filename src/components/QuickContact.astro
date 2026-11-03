@@ -8,6 +8,8 @@ import { site, whatsappLink } from '../data/site';
   <Icon name="whatsapp" />
 </a>
 
+<a class="est" href="/contact#enquiry" tabindex="-1" aria-hidden="true"><Icon name="calculator" />Get a free estimate</a>
+
 <nav class="mbar" aria-label="Quick contact">
   <a href={site.phoneHref}><Icon name="phone" />Call</a>
   <a href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
@@ -33,6 +35,54 @@ import { site, whatsappLink } from '../data/site';
   .wa:hover {
     transform: scale(1.06);
   }
+
+  /* Home hero only: the floating WhatsApp button swaps for a Free estimate button (JS sets .in-hero on <html>) */
+  .wa,
+  .est {
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.35s var(--ease),
+      visibility 0s linear 0s;
+  }
+  .est {
+    position: fixed;
+    right: clamp(1rem, 2vw, 2rem);
+    bottom: clamp(1rem, 2vw, 2rem);
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 54px;
+    padding: 0 1.6rem 0 1.3rem;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--espresso);
+    font: 500 var(--fs-sm) / 1 var(--font-body);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    box-shadow: 0 12px 28px -12px rgb(30 19 13 / 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+  }
+  .est:hover {
+    background: var(--sand);
+  }
+  .est :global(svg) {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
+  }
+  :global(.in-hero) .est {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  :global(.in-hero) .wa {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+  }
   .wa :global(svg) {
     width: 30px;
     height: 30px;
@@ -41,7 +91,8 @@ import { site, whatsappLink } from '../data/site';
     display: none;
   }
   @media (max-width: 860px) {
-    .wa {
+    .wa,
+    .est {
       display: none;
     }
     .mbar {
