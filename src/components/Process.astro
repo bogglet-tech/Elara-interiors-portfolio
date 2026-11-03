@@ -1,0 +1,97 @@
+---
+import { process } from '../data/content';
+
+interface Props {
+  title?: string;
+  intro?: string;
+}
+const {
+  title = 'How your home comes together',
+  intro = 'Five stages, one team and one point of contact, so you always know what happens next.',
+} = Astro.props;
+---
+
+<section class="section dark pr" aria-labelledby="pr-title">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="pr-title">{title}</h2>
+      <div class="head__aside">
+        <p>{intro}</p>
+        <a class="btn btn--sand" href="/contact#enquiry">Book a consultation</a>
+      </div>
+    </div>
+
+    <ol class="pr__list" role="list">
+      {
+        process.map((s, i) => (
+          <li class="pr__step">
+            <span class="pr__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3>
+              <span class="visually-hidden">Step {i + 1}: </span>
+              {s.name}
+            </h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pr__list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line-dark);
+  }
+  @media (min-width: 1000px) {
+    .pr__list {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  .pr__step {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 0.25rem 1rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  @media (min-width: 1000px) {
+    .pr__step {
+      display: block;
+      padding: 2rem 1.75rem 0 0;
+      border-bottom: 0;
+    }
+    .pr__step + .pr__step {
+      padding-left: 1.75rem;
+      border-left: 1px solid var(--line-dark);
+    }
+  }
+  .pr__num {
+    grid-row: span 2;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 2rem + 2vw, 4rem);
+    line-height: 0.9;
+    color: var(--sand);
+  }
+  @media (min-width: 1000px) {
+    .pr__num {
+      display: block;
+      margin-bottom: 2.5rem;
+    }
+  }
+  .pr__step h3 {
+    margin-bottom: 0.6rem;
+    font-size: var(--fs-md);
+  }
+  .pr__step p {
+    margin: 0;
+    font-size: var(--fs-sm);
+    font-weight: 300;
+    color: rgba(247, 239, 232, 0.7);
+  }
+</style>

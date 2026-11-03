@@ -1,0 +1,880 @@
+---
+import { Picture, Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Packages from '../components/Packages.astro';
+import Process from '../components/Process.astro';
+import ConsultBand from '../components/ConsultBand.astro';
+import logoWhite from '../assets/brand/logo-white.png';
+import { site, whatsappLink } from '../data/site';
+import { photos, categories, promises, gallery } from '../data/content';
+
+const slides = [
+  { image: photos.goldenLiving, caption: 'Double-height living room', alt: 'Double-height living room with marble floor, cream sectional sofa and golden cove lighting' },
+  { image: photos.heroTeakBedroom, caption: 'Teak-panelled master bedroom', alt: 'Bedroom with teak wall panelling, warm cove lighting and a dark wooden bed' },
+  { image: photos.loungeDark, caption: 'Lounge with a dark palette', alt: 'Tall lounge with dark walls, a low sofa and a pendant light' },
+  { image: photos.bedroomSlats, caption: 'Bedroom with wooden wall slats', alt: 'Bedroom with dark wooden wall slats and warm bedside lighting' },
+];
+const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], gallery[12], gallery[7]];
+---
+
+<Base
+  title={site.name}
+  description="Elara Interiors designs complete home interiors for apartments, villas and independent homes: modular kitchens, bedrooms, wardrobes, living and dining spaces. Complete 2 BHK interiors for ₹5,00,000."
+>
+  <!-- 1. Hero: the brand book cover, as a page -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <h1 id="hero-title">Designed for the way you live</h1>
+        <p class="lede">
+          Complete interiors for apartments, villas and independent homes. Planned room by room, made to measure and
+          installed by one team.
+        </p>
+        <div class="actions">
+          <a class="btn" href="/contact#enquiry">Get a free estimate</a>
+          <a class="btn btn--line" href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />Chat on WhatsApp</a>
+        </div>
+        <p class="hero__offer">
+          Complete 2 BHK interiors from <strong>₹5,00,000</strong>
+          <a href="#packages" class="link">See packages</a>
+        </p>
+      </div>
+
+      <div class="hero__art">
+        <div class="hero__square cover">
+          <Picture
+            src={photos.sofaCorner}
+            alt="Low beige sofa with soft throws beside a dark wooden wall"
+            widths={[300, 589]}
+            sizes="(min-width: 1000px) 22vw, 40vw"
+            formats={['avif', 'webp']}
+            loading="eager"
+          />
+        </div>
+        <p class="hero__tagline">
+          A thoughtfully designed space is where beauty meets comfort, and every detail tells a story.
+        </p>
+
+        <div class="hero__slider" data-slider aria-roledescription="carousel" aria-label="Featured rooms">
+          {
+            slides.map((s, i) => (
+              <figure
+                class="hero__slide cover"
+                data-slide
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${slides.length}`}
+                data-active={i === 0 ? '' : undefined}
+              >
+                <Picture
+                  src={s.image}
+                  alt={s.alt}
+                  widths={[480, 720, 1000, 1300]}
+                  sizes="(min-width: 1000px) 34vw, 100vw"
+                  formats={['avif', 'webp']}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  fetchpriority={i === 0 ? 'high' : 'auto'}
+                />
+                <figcaption>{s.caption}</figcaption>
+              </figure>
+            ))
+          }
+          <div class="hero__ctrl">
+            <button type="button" class="hero__pause" data-pause aria-label="Pause slideshow" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5l11 7-11 7Z" /></svg>
+            </button>
+            {slides.map((_, i) => (
+              <button type="button" class="hero__dot" data-dot={i} aria-label={`Show photo ${i + 1}`} aria-current={i === 0 ? 'true' : undefined}>
+                <span />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. The brand cover's mocha bar, carrying DLife's promise strip -->
+    <ul class="promise mocha" role="list">
+      {
+        promises.map((p) => (
+          <li>
+            <Icon name={p.icon as 'team'} />
+            <div>
+              <strong>{p.title}</strong>
+              <span>{p.text}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- 3. Package offers -->
+  <Packages tone="white" />
+
+  <!-- 4. Introduction: brand book "Brand Introduction" slide -->
+  <section class="section intro" aria-labelledby="intro-title">
+    <div class="wrap intro__grid">
+      <div class="intro__art">
+        <div class="intro__photo cover" data-reveal>
+          <Picture
+            src={photos.greenLounge}
+            alt="Lounge with a green velvet sofa, wooden wall slats and a low wooden table"
+            widths={[400, 736]}
+            sizes="(min-width: 900px) 34vw, 80vw"
+            formats={['avif', 'webp']}
+          />
+        </div>
+        <div class="intro__mark" aria-hidden="true">
+          <Image src={logoWhite} alt="" width={220} densities={[1, 2]} />
+        </div>
+      </div>
+      <div class="intro__copy">
+        <h2 id="intro-title">Homes that feel uniquely yours</h2>
+        <p class="lede">
+          Elara Interiors is a contemporary interior design company. We turn houses into personal homes that reflect each
+          family’s lifestyle, preferences and plans for the future.
+        </p>
+        <p>
+          Great interiors go beyond how a room looks. They should be comfortable, practical and give you a lasting sense of
+          belonging. So every project starts with careful planning, uses quality materials, and is coordinated by our team
+          from the first concept to the final handover.
+        </p>
+        <a class="link" href="/about">Our story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. What we design: hover rows that swap a preview photo -->
+  <section class="section white wd" aria-labelledby="wd-title">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="wd-title">What we design</h2>
+        <div class="head__aside">
+          <p>Take on the whole home, or start with the one room that needs it most.</p>
+          <a class="link" href="/services">All services</a>
+        </div>
+      </div>
+
+      <div class="wd__grid" data-wd>
+        <ul class="wd__list" role="list">
+          {
+            categories.map((c, i) => (
+              <li>
+                <a href={`/services#${c.id}`} class="wd__row" data-wd-row={i} aria-current={i === 0 ? 'true' : undefined}>
+                  <span class="wd__thumb cover">
+                    <Picture src={c.image} alt="" widths={[160, 320]} sizes="96px" formats={['avif', 'webp']} />
+                  </span>
+                  <span class="wd__text">
+                    <span class="wd__name">{c.name}</span>
+                    <span class="wd__desc"><span>{c.text}</span></span>
+                  </span>
+                  <Icon name="next" class="wd__go" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="wd__preview" aria-hidden="true">
+          {
+            categories.map((c, i) => (
+              <div class="wd__img cover" data-wd-img={i} data-active={i === 0 ? '' : undefined}>
+                <Picture src={c.image} alt="" widths={[560, 900]} sizes="38vw" formats={['avif', 'webp']} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Process -->
+  <Process />
+
+  <!-- 7. Made to measure (DLife's "factory" section, told honestly) -->
+  <section class="mm" aria-labelledby="mm-title">
+    <div class="mm__media cover">
+      <Picture
+        src={photos.bedroomSunlit}
+        alt="Bedroom with wooden floor, low bed and evening sun through tall windows"
+        widths={[800, 1300, 2000]}
+        sizes="100vw"
+        formats={['avif', 'webp']}
+      />
+    </div>
+    <div class="wrap mm__in">
+      <div class="mm__card">
+        <h2 id="mm-title">Made to measure, down to the last drawer</h2>
+        <p>
+          Cabinets, wardrobes and furniture are produced to your room’s exact measurements, in the boards, hardware and
+          finishes you approve. Then our team installs everything and stays on call after you move in.
+        </p>
+        <a class="link" href="/services">How we work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Our work rail -->
+  <section class="section work" aria-labelledby="work-title">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="work-title">Rooms we’ve put together</h2>
+        <div class="head__aside">
+          <p>Kitchens, bedrooms and living spaces in warm, lasting materials.</p>
+          <div class="work__nav">
+            <a class="link" href="/gallery">Open the gallery</a>
+            <button type="button" class="work__btn" data-rail-prev aria-label="Scroll photos left"><Icon name="prev" /></button>
+            <button type="button" class="work__btn" data-rail-next aria-label="Scroll photos right"><Icon name="next" /></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="rail" role="list" data-rail>
+      {
+        rail.map((g, i) => (
+          <li class:list={['rail__item', { 'rail__item--wide': i % 3 === 0 }]}>
+            <a href="/gallery">
+              <span class="rail__img cover">
+                <Picture src={g.image} alt={g.alt} widths={[420, 700, 1000]} sizes="(min-width: 900px) 34vw, 78vw" formats={['avif', 'webp']} />
+              </span>
+              <span class="rail__cap">
+                {g.caption}
+                <span>{g.room}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- 9. Consultation -->
+  <ConsultBand />
+</Base>
+
+<style>
+  /* ================= Hero ================= */
+  .hero__grid {
+    display: grid;
+    max-width: 1680px;
+    margin-inline: auto;
+  }
+  @media (min-width: 1000px) {
+    .hero__grid {
+      grid-template-columns: 1fr 1.08fr;
+      min-height: min(calc(100svh - var(--header-h) - 108px), 820px);
+    }
+  }
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2.5rem, 1.5rem + 4vw, 5rem) var(--gutter) clamp(3rem, 2rem + 3vw, 4rem);
+  }
+  @media (min-width: 1000px) {
+    .hero__copy {
+      padding-right: clamp(2rem, 4vw, 4rem);
+    }
+  }
+  .hero h1 {
+    max-width: 9ch;
+    margin-bottom: 1.5rem;
+    font-size: clamp(3rem, 1.4rem + 5.6vw, 6.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+  .hero .lede {
+    margin-bottom: 2.25rem;
+  }
+  .hero__offer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    margin: 2.75rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+  .hero__offer strong {
+    font-weight: 500;
+    color: var(--mocha);
+  }
+
+  .hero__art {
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.78fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 0 clamp(0.75rem, 1.2vw, 1.25rem);
+  }
+  .hero__square {
+    aspect-ratio: 4 / 5;
+  }
+  .hero__tagline {
+    align-self: end;
+    margin: 0;
+    padding: 1.5rem 0 2.5rem;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 26ch;
+  }
+  .hero__slider {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-height: 100%;
+    overflow: hidden;
+    background: var(--espresso);
+  }
+  @media (max-width: 999px) {
+    .hero__art {
+      grid-template-columns: 1fr;
+      padding-inline: var(--gutter);
+    }
+    .hero__square,
+    .hero__tagline {
+      display: none;
+    }
+    .hero__slider {
+      grid-column: 1;
+      grid-row: 1;
+      aspect-ratio: 4 / 5;
+      min-height: 0;
+    }
+  }
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 1.4s var(--ease);
+  }
+  .hero__slide[data-active] {
+    opacity: 1;
+  }
+  .hero__slide :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__slide::after {
+    content: '';
+    position: absolute;
+    inset: 55% 0 0;
+    background: linear-gradient(to top, rgba(40, 26, 19, 0.65), transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__slide[data-active] :global(img) {
+      animation: kenburns 7s linear both;
+    }
+  }
+  @keyframes kenburns {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  .hero__slide figcaption {
+    position: absolute;
+    left: 1.5rem;
+    bottom: 4.25rem;
+    z-index: 1;
+    color: var(--cream);
+    font-size: var(--fs-sm);
+  }
+  .hero__ctrl {
+    position: absolute;
+    left: 1.5rem;
+    right: 6rem;
+    bottom: 1.25rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .hero__dot {
+    flex: 1;
+    max-width: 64px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .hero__dot span {
+    display: block;
+    height: 2px;
+    background: rgba(247, 239, 232, 0.35);
+    overflow: hidden;
+  }
+  .hero__dot span::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: var(--cream);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .hero__dot[aria-current='true'] span::after {
+    transform: scaleX(1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-playing] .hero__dot[aria-current='true'] span::after {
+      animation: progress 6s linear both;
+    }
+  }
+  @keyframes progress {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  .hero__pause {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 0.75rem;
+    flex: none;
+    border: 1px solid rgba(247, 239, 232, 0.4);
+    border-radius: 50%;
+    background: none;
+    color: var(--cream);
+    cursor: pointer;
+  }
+  .hero__pause svg {
+    width: 14px;
+    height: 14px;
+  }
+  .i-pause {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+  .i-play {
+    display: none;
+    fill: currentColor;
+  }
+  .hero__pause[aria-pressed='true'] .i-pause {
+    display: none;
+  }
+  .hero__pause[aria-pressed='true'] .i-play {
+    display: inline;
+  }
+
+  /* Promise strip */
+  .promise {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0;
+    padding: 0.5rem var(--gutter);
+    list-style: none;
+  }
+  @media (min-width: 1000px) {
+    .promise {
+      grid-template-columns: repeat(4, 1fr);
+      padding: 0 max(var(--gutter), calc((100vw - var(--max)) / 2));
+    }
+  }
+  .promise li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 1.25rem 1rem 1.25rem 0;
+  }
+  @media (min-width: 1000px) {
+    .promise li {
+      padding: 2.1rem 1.5rem;
+    }
+    .promise li + li {
+      border-left: 1px solid rgba(247, 239, 232, 0.16);
+    }
+    .promise li:first-child {
+      padding-left: 0;
+    }
+  }
+  .promise :global(svg) {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    color: var(--sand);
+    stroke-width: 1.3;
+  }
+  .promise strong {
+    display: block;
+    font-weight: 500;
+    color: var(--cream);
+    line-height: 1.3;
+  }
+  .promise span {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: var(--fs-xs);
+    color: rgba(247, 239, 232, 0.68);
+    line-height: 1.45;
+  }
+
+  /* ================= Intro ================= */
+  .intro__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 7rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .intro__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+  }
+  .intro__art {
+    position: relative;
+    padding-right: clamp(3rem, 8vw, 7rem);
+    padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .intro__photo {
+    aspect-ratio: 3 / 4;
+  }
+  .intro__mark {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: clamp(150px, 46%, 280px);
+    aspect-ratio: 0.82;
+    padding: 1.5rem;
+    background: var(--sand);
+  }
+  .intro__mark :global(img) {
+    width: 80%;
+    height: auto;
+  }
+  .intro__copy h2 {
+    max-width: 11ch;
+    margin-bottom: 1.75rem;
+  }
+  .intro__copy .lede {
+    color: var(--mocha);
+  }
+  .intro__copy > p:not(.lede) {
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  /* ================= What we design ================= */
+  .wd__grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 1000px) {
+    .wd__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(3rem, 6vw, 6rem);
+    }
+  }
+  .wd__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  .wd__row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+  }
+  .wd__thumb {
+    width: 76px;
+    aspect-ratio: 1;
+  }
+  .wd__thumb :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  @media (min-width: 1000px) {
+    .wd__thumb {
+      display: none;
+    }
+    .wd__row {
+      grid-template-columns: 1fr auto;
+      padding: 1.75rem 0;
+    }
+  }
+  .wd__name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem);
+    line-height: 1.1;
+    color: var(--mocha);
+    transition:
+      color 0.3s var(--ease),
+      transform 0.4s var(--ease);
+  }
+  .wd__desc {
+    display: block;
+    margin-top: 0.4rem;
+    max-width: 52ch;
+    font-size: var(--fs-sm);
+    font-weight: 300;
+    color: var(--muted);
+  }
+  @media (min-width: 1000px) {
+    .wd__desc {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      margin-top: 0;
+      transition:
+        grid-template-rows 0.45s var(--ease),
+        opacity 0.45s var(--ease),
+        margin-top 0.45s var(--ease);
+    }
+    .wd__desc > span {
+      overflow: hidden;
+    }
+    .wd__row[aria-current='true'] .wd__desc {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 0.6rem;
+    }
+    .wd__row:not([aria-current='true']) .wd__name {
+      color: rgba(103, 66, 48, 0.5);
+    }
+    .wd__row[aria-current='true'] .wd__name {
+      transform: translateX(0.5rem);
+    }
+  }
+  .wd__row :global(.wd__go) {
+    width: 24px;
+    height: 24px;
+    color: var(--sand);
+    transition: transform 0.3s var(--ease);
+  }
+  .wd__row:hover :global(.wd__go) {
+    transform: translateX(4px);
+  }
+  .wd__preview {
+    display: none;
+  }
+  @media (min-width: 1000px) {
+    .wd__preview {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      aspect-ratio: 4 / 5;
+      align-self: start;
+    }
+  }
+  .wd__img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease);
+  }
+  .wd__img[data-active] {
+    opacity: 1;
+  }
+  .wd__img :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ================= Made to measure ================= */
+  .mm {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(560px, 92vh, 860px);
+  }
+  .mm__media {
+    position: absolute;
+    inset: 0;
+  }
+  .mm__media :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .mm__in {
+    position: relative;
+    padding-block: var(--gutter);
+  }
+  .mm__card {
+    max-width: 560px;
+    padding: clamp(2rem, 1.5rem + 2.5vw, 3.75rem);
+    background: var(--cream);
+  }
+  .mm__card h2 {
+    margin-bottom: 1.25rem;
+    font-size: var(--fs-xl);
+  }
+  .mm__card p {
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+
+  /* ================= Work rail ================= */
+  .work__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .work__nav .link {
+    margin-right: 1rem;
+  }
+  .work__btn {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: none;
+    color: var(--mocha);
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease);
+  }
+  .work__btn:hover {
+    background: var(--mocha);
+    color: var(--cream);
+  }
+  .work__btn :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .rail {
+    display: flex;
+    gap: clamp(0.75rem, 1.5vw, 1.5rem);
+    margin: 0;
+    padding: 0 max(var(--gutter), calc((100vw - var(--max)) / 2));
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--max)) / 2));
+    scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail__item {
+    flex: 0 0 auto;
+    width: min(62vw, 360px);
+    scroll-snap-align: start;
+  }
+  .rail__item--wide {
+    width: min(84vw, 620px);
+  }
+  .rail a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+  .rail__img {
+    display: block;
+    height: clamp(320px, 30vw + 120px, 520px);
+  }
+  .rail__img :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .rail__img :global(img) {
+    transition: transform 1.2s var(--ease-out);
+  }
+  .rail a:hover .rail__img :global(img) {
+    transform: scale(1.04);
+  }
+  .rail__cap {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.85rem;
+    font-size: var(--fs-sm);
+    color: var(--espresso);
+  }
+  .rail__cap span {
+    color: var(--muted);
+    font-size: var(--fs-xs);
+  }
+</style>
+
+<script>
+  /* Hero slider: crossfade every 6s, pausable, starts paused for reduced motion */
+  const slider = document.querySelector<HTMLElement>('[data-slider]');
+  if (slider) {
+    const slides = [...slider.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...slider.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const pause = slider.querySelector<HTMLButtonElement>('[data-pause]')!;
+    let i = 0;
+    let timer: number | undefined;
+
+    const go = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => s.toggleAttribute('data-active', k === i));
+      dots.forEach((d, k) => (k === i ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+    };
+    const stop = () => {
+      slider.removeAttribute('data-playing');
+      window.clearInterval(timer);
+    };
+    const play = () => {
+      stop();
+      void slider.offsetWidth; // restart the progress bar animation
+      slider.setAttribute('data-playing', '');
+      timer = window.setInterval(() => {
+        go(i + 1);
+        play();
+      }, 6000);
+    };
+    const paused = () => pause.getAttribute('aria-pressed') === 'true';
+
+    dots.forEach((d, k) =>
+      d.addEventListener('click', () => {
+        go(k);
+        if (!paused()) play();
+      }),
+    );
+    pause.addEventListener('click', () => {
+      const p = !paused();
+      pause.setAttribute('aria-pressed', String(p));
+      pause.setAttribute('aria-label', p ? 'Play slideshow' : 'Pause slideshow');
+      p ? stop() : play();
+    });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      pause.setAttribute('aria-pressed', 'true');
+      pause.setAttribute('aria-label', 'Play slideshow');
+    } else {
+      play();
+    }
+  }
+
+  /* What we design: hovering or focusing a row swaps the preview photo */
+  const wd = document.querySelector<HTMLElement>('[data-wd]');
+  if (wd) {
+    const rows = [...wd.querySelectorAll<HTMLElement>('[data-wd-row]')];
+    const imgs = [...wd.querySelectorAll<HTMLElement>('[data-wd-img]')];
+    const set = (n: number) => {
+      rows.forEach((r, k) => (k === n ? r.setAttribute('aria-current', 'true') : r.removeAttribute('aria-current')));
+      imgs.forEach((im, k) => im.toggleAttribute('data-active', k === n));
+    };
+    rows.forEach((r, k) => {
+      r.addEventListener('mouseenter', () => set(k));
+      r.addEventListener('focus', () => set(k));
+    });
+  }
+
+  /* Work rail arrows */
+  const rail = document.querySelector<HTMLElement>('[data-rail]');
+  if (rail) {
+    const by = () => Math.min(rail.clientWidth * 0.8, 700);
+    document.querySelector('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -by(), behavior: 'smooth' }));
+    document.querySelector('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: by(), behavior: 'smooth' }));
+  }
+</script>

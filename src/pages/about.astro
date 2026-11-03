@@ -1,0 +1,234 @@
+---
+import { Picture, Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Process from '../components/Process.astro';
+import ConsultBand from '../components/ConsultBand.astro';
+import logoWhite from '../assets/brand/logo-white.png';
+import logo from '../assets/brand/logo.png';
+import { photos, highlights } from '../data/content';
+---
+
+<Base
+  title="About us"
+  description="Elara Interiors is a contemporary interior design company creating personal, functional homes for apartments, villas and independent houses. Read our story, vision and mission."
+  ogImage={photos.loungeDark}
+>
+  <PageBanner
+    crumb="About"
+    title="Interiors that feel like yours"
+    intro="A contemporary interior design company turning houses into personal homes."
+    image={photos.livingDark}
+  />
+
+  <!-- Brand book "Brand Introduction" slide -->
+  <section class="section">
+    <div class="wrap story">
+      <div class="story__art">
+        <div class="story__photo cover" data-reveal>
+          <Picture src={photos.sofaCorner} alt="Low beige sofa with soft throws beside a dark wooden wall" widths={[400, 589]} sizes="(min-width: 900px) 30vw, 80vw" formats={['avif', 'webp']} />
+        </div>
+        <div class="story__mark" aria-hidden="true"><Image src={logoWhite} alt="" width={200} densities={[1, 2]} /></div>
+      </div>
+      <div class="story__copy">
+        <h2>Our story</h2>
+        <p class="lede">
+          We design customised interiors for apartments, villas and independent homes, from modular kitchens and bedrooms to
+          living and dining spaces, wardrobes and bespoke furniture.
+        </p>
+        <p>
+          Every room is planned to make the best use of the space you have. We believe great interiors go beyond looks:
+          they should be comfortable, practical and give you a lasting sense of belonging.
+        </p>
+        <p>
+          That’s why we pair creative ideas with quality materials, close attention to detail and professional project
+          coordination. From the first concept to the final installation, we take care of the whole journey so it stays
+          smooth for you. We turn your ideas into elegant spaces that feel uniquely yours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand book "Vision / Mission" slide -->
+  <section class="vm white" aria-label="Vision and mission">
+    <div class="vm__band">
+      <Image src={logo} alt="" width={420} densities={[1, 2]} class="vm__logo" />
+    </div>
+    <div class="wrap vm__grid">
+      <div class="vm__col">
+        <h2>Vision</h2>
+        <p>
+          To become a trusted interior design brand known for creating timeless, elegant and functional spaces that reflect
+          individuality and elevate everyday living.
+        </p>
+        <p>
+          We want thoughtfully designed interiors to be within reach of more families, and to build lasting relationships
+          with every client through trust, transparency and a commitment to excellence.
+        </p>
+      </div>
+      <div class="vm__col">
+        <h2>Mission</h2>
+        <ul role="list">
+          <li>To create timeless, functional and refined interiors tailored to each client’s vision and lifestyle.</li>
+          <li>To bring together innovative design, premium materials and precise craftsmanship to elevate everyday living.</li>
+          <li>To deliver personal, sustainable, high-quality spaces that balance elegance, comfort and lasting value.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="exp-title">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="exp-title">What you can expect from us</h2>
+      </div>
+      <ul class="exp" role="list">
+        {
+          highlights.map((h) => (
+            <li>
+              <h3>{h.title}</h3>
+              <p>{h.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Process title="How we work" />
+  <ConsultBand image={photos.goldenLiving} />
+</Base>
+
+<style>
+  .story {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 7rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .story {
+      grid-template-columns: 0.85fr 1.15fr;
+    }
+  }
+  .story__art {
+    position: relative;
+    padding: 0 clamp(3rem, 8vw, 7rem) clamp(2rem, 4vw, 3.5rem) 0;
+  }
+  .story__photo {
+    aspect-ratio: 3 / 4;
+  }
+  .story__mark {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: clamp(140px, 44%, 260px);
+    aspect-ratio: 0.82;
+    background: var(--mocha);
+  }
+  .story__mark :global(img) {
+    width: 78%;
+    height: auto;
+  }
+  .story__copy h2 {
+    margin-bottom: 1.75rem;
+  }
+  .story__copy .lede {
+    color: var(--mocha);
+  }
+  .story__copy p:not(.lede) {
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  .vm__band {
+    display: grid;
+    place-items: center;
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+    background: var(--stone);
+  }
+  .vm__band :global(.vm__logo) {
+    width: clamp(220px, 30vw, 420px);
+    height: auto;
+  }
+  .vm__grid {
+    display: grid;
+    gap: 3rem;
+    padding-block: clamp(3.5rem, 2.5rem + 4vw, 7rem);
+  }
+  @media (min-width: 860px) {
+    .vm__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .vm__col:first-child {
+      padding-right: clamp(2rem, 5vw, 6rem);
+    }
+    .vm__col + .vm__col {
+      padding-left: clamp(2rem, 5vw, 6rem);
+      border-left: 1px solid var(--line);
+    }
+  }
+  .vm h2 {
+    margin-bottom: 1.5rem;
+    font-size: var(--fs-xl);
+  }
+  .vm p {
+    font-weight: 300;
+    color: var(--muted);
+  }
+  .vm ul {
+    margin: 0;
+    padding: 0 0 0 1.1rem;
+    display: grid;
+    gap: 0.9rem;
+    font-weight: 300;
+    color: var(--muted);
+  }
+  .vm li::marker {
+    color: var(--sand);
+  }
+
+  .exp {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 760px) {
+    .exp {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .exp {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .exp li {
+    padding: 2rem 2rem 2rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 1100px) {
+    .exp li {
+      border-bottom: 0;
+    }
+    .exp li + li {
+      padding-left: 2rem;
+      border-left: 1px solid var(--line);
+    }
+  }
+  .exp h3 {
+    margin-bottom: 0.75rem;
+    font-size: var(--fs-md);
+  }
+  .exp p {
+    margin: 0;
+    font-size: var(--fs-sm);
+    font-weight: 300;
+    color: var(--muted);
+  }
+</style>

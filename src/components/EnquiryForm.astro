@@ -1,0 +1,267 @@
+---
+// Enquiry form. DUMMY SUBMIT: validates and shows a success message, nothing is sent yet.
+// To go live, set `endpoint` (e.g. https://api.web3forms.com/submit) and add the access key as a hidden input;
+// the script below already POSTs FormData when an endpoint is present.
+import { requirementOptions, homeTypeOptions } from '../data/content';
+
+interface Props {
+  id?: string;
+  endpoint?: string;
+}
+const { id = 'enquiry-form', endpoint = '' } = Astro.props;
+---
+
+<form class="form" id={id} data-enquiry data-endpoint={endpoint} novalidate>
+  <div class="form__fields">
+    <div class="field">
+      <label for={`${id}-name`}>Your name</label>
+      <input id={`${id}-name`} name="name" type="text" autocomplete="name" required />
+      <p class="field__error" data-error-for="name">Enter your name.</p>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-phone`}>Phone number</label>
+      <input
+        id={`${id}-phone`}
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        pattern="^[+]?[0-9 ]{10,15}$"
+        required
+      />
+      <p class="field__error" data-error-for="phone">Enter a 10-digit mobile number.</p>
+    </div>
+
+    <div class="field field--full">
+      <label for={`${id}-email`}>Email <span class="field__opt">(optional)</span></label>
+      <input id={`${id}-email`} name="email" type="email" autocomplete="email" />
+      <p class="field__error" data-error-for="email">Enter an email like name@example.com.</p>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-home`}>Type of home</label>
+      <select id={`${id}-home`} name="home_type">
+        {homeTypeOptions.map((o) => <option>{o}</option>)}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-req`}>What do you need?</label>
+      <select id={`${id}-req`} name="requirement" data-requirement>
+        {requirementOptions.map((o) => <option>{o}</option>)}
+      </select>
+    </div>
+
+    <div class="field field--full">
+      <label for={`${id}-msg`}>Tell us about your home <span class="field__opt">(optional)</span></label>
+      <textarea id={`${id}-msg`} name="message" rows="4" placeholder="Location, size, when you’d like to start, anything else"
+      ></textarea>
+    </div>
+
+    <!-- spam honeypot: real visitors never see or fill this -->
+    <div class="visually-hidden" aria-hidden="true">
+      <label for={`${id}-company`}>Company</label>
+      <input id={`${id}-company`} name="company" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="form__foot">
+    <button class="btn" type="submit" data-submit>Request a call back</button>
+    <p class="form__privacy">
+      We only use your details to reply to this enquiry. See our <a href="/privacy-policy">privacy policy</a>.
+    </p>
+  </div>
+
+  <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-status></div>
+</form>
+
+<style>
+  .form__fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem 2rem;
+  }
+  @media (min-width: 560px) {
+    .form__fields {
+      grid-template-columns: 1fr 1fr;
+    }
+    .field--full {
+      grid-column: 1 / -1;
+    }
+  }
+  .field {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .field label {
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .field__opt {
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.5rem 0;
+    border: 0;
+    border-bottom: 1px solid rgba(103, 66, 48, 0.35);
+    border-radius: 0;
+    background: transparent;
+    color: var(--espresso);
+    font: 400 1.0625rem / 1.4 var(--font-body);
+    transition: border-color 0.2s var(--ease);
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-bottom-color: var(--mocha);
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-bottom: 2px solid var(--mocha);
+  }
+  .field select {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23674230' stroke-width='1.6'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    background-size: 18px;
+    cursor: pointer;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+  .field textarea::placeholder {
+    color: rgba(122, 99, 85, 0.6);
+  }
+  .field__error {
+    display: none;
+    margin: 0.3rem 0 0;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    color: #9a2d1c;
+  }
+  .field[data-invalid] input {
+    border-bottom-color: #9a2d1c;
+  }
+  .field[data-invalid] .field__error {
+    display: block;
+  }
+  .form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin-top: 2.25rem;
+  }
+  .form__privacy {
+    margin: 0;
+    max-width: 36ch;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+  .form__privacy a {
+    color: var(--mocha);
+  }
+  .form__status:empty {
+    display: none;
+  }
+  .form__status {
+    padding: 1.5rem 1.75rem;
+    background: var(--espresso);
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-size: var(--fs-md);
+    line-height: 1.35;
+  }
+  .form__status[data-kind='error'] {
+    margin-top: 1.25rem;
+    background: #f3dcd6;
+    color: #7a2416;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+  }
+  .form[data-sent] .form__fields,
+  .form[data-sent] .form__foot {
+    display: none;
+  }
+</style>
+
+<script>
+  const packageToRequirement: Record<string, string> = {
+    '2bhk': 'Complete 2 BHK package',
+    '4bhk': 'Complete 4 BHK package',
+    custom: 'Full home (custom)',
+  };
+
+  document.querySelectorAll<HTMLFormElement>('form[data-enquiry]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+
+    // Preselect the requirement when arriving from a package button (?package=2bhk)
+    const pkg = new URLSearchParams(location.search).get('package');
+    const req = form.querySelector<HTMLSelectElement>('[data-requirement]');
+    if (pkg && req && packageToRequirement[pkg]) req.value = packageToRequirement[pkg];
+
+    const validate = (input: HTMLInputElement) => {
+      const field = input.closest('.field');
+      const ok = input.checkValidity();
+      field?.toggleAttribute('data-invalid', !ok);
+      input.setAttribute('aria-invalid', String(!ok));
+      const err = field?.querySelector<HTMLElement>('.field__error');
+      if (err) {
+        err.id ||= `${input.id}-error`;
+        if (!ok) input.setAttribute('aria-describedby', err.id);
+        else input.removeAttribute('aria-describedby');
+      }
+      return ok;
+    };
+
+    const checked = form.querySelectorAll<HTMLInputElement>('input[name="name"], input[name="phone"], input[name="email"]');
+    checked.forEach((i) => i.addEventListener('blur', () => i.value && validate(i)));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const invalid = [...checked].filter((i) => !validate(i));
+      if (invalid.length) {
+        invalid[0].focus();
+        return;
+      }
+      const data = new FormData(form);
+      if (data.get('company')) return; // honeypot filled: silently drop
+
+      submit.disabled = true;
+      submit.textContent = 'Sending…';
+      const endpoint = form.dataset.endpoint;
+      try {
+        if (endpoint) {
+          const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(String(res.status));
+        } else {
+          await new Promise((r) => setTimeout(r, 600)); // dummy delay until a form endpoint is configured
+        }
+        const name = String(data.get('name') || '').trim().split(' ')[0];
+        status.dataset.kind = 'ok';
+        status.textContent = `Thank you${name ? `, ${name}` : ''}. We’ve received your request and will call you within one working day.`;
+        form.setAttribute('data-sent', '');
+        status.focus();
+      } catch {
+        status.dataset.kind = 'error';
+        status.textContent = 'Your request didn’t go through. Check your connection and try again, or message us on WhatsApp.';
+        submit.disabled = false;
+        submit.textContent = 'Request a call back';
+      }
+    });
+  });
+</script>

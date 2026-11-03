@@ -1,0 +1,310 @@
+---
+// DLife-style "Package offers": two fixed-price packages + a custom card. Full inclusions open in a dialog.
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { packages, formatINR, photos } from '../data/content';
+
+interface Props {
+  tone?: 'cream' | 'white';
+}
+const { tone = 'white' } = Astro.props;
+---
+
+<section class:list={['section pk', { white: tone === 'white' }]} id="packages" aria-labelledby="pk-title">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="pk-title">Package offers</h2>
+      <div class="head__aside">
+        <p>Fixed prices for the whole home, with every item listed room by room. Pick a package, or ask us to tailor one.</p>
+      </div>
+    </div>
+
+    <div class="pk__grid">
+      {
+        packages.map((p, i) => (
+          <article class="card" aria-labelledby={`pk-${p.id}`}>
+            <div class="card__media cover">
+              <Picture
+                src={p.image}
+                alt={p.imageAlt}
+                widths={[420, 640, 900]}
+                sizes="(min-width: 1100px) 410px, (min-width: 700px) 46vw, 92vw"
+                formats={['avif', 'webp']}
+              />
+              <span class="card__tag">{p.rooms.length} spaces included</span>
+            </div>
+            <div class="card__body">
+              <h3 id={`pk-${p.id}`}>{p.title}</h3>
+              <p class="card__price">
+                {formatINR(p.price)}
+                <span>complete package</span>
+              </p>
+              <ul class="card__rooms" role="list" aria-label="Rooms covered">
+                {p.rooms.map((r) => <li>{r.name}</li>)}
+              </ul>
+              <div class="card__actions">
+                <a class="btn" href={`/contact?package=${p.id}#enquiry`}>Enquire about {p.name}</a>
+                <button type="button" class="btn btn--line" data-open={`dlg-${p.id}`}>
+                  What’s included
+                </button>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+
+      <article class="card card--custom dark" aria-labelledby="pk-custom">
+        <div class="card__media cover">
+          <Picture
+            src={photos.villaPool}
+            alt="Modern villa with a pool terrace at dusk"
+            widths={[420, 640, 900]}
+            sizes="(min-width: 1100px) 410px, (min-width: 700px) 46vw, 92vw"
+            formats={['avif', 'webp']}
+          />
+        </div>
+        <div class="card__body">
+          <h3 id="pk-custom">Villas and custom homes</h3>
+          <p class="card__note">
+            Bigger home, a single room, or something specific in mind? We’ll design and quote it around your space and budget.
+          </p>
+          <div class="card__actions">
+            <a class="btn btn--sand" href="/contact?package=custom#enquiry">Request a custom quote</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  {
+    packages.map((p) => (
+      <dialog class="dlg" id={`dlg-${p.id}`} aria-labelledby={`dlg-${p.id}-t`}>
+        <div class="dlg__head">
+          <div>
+            <h2 id={`dlg-${p.id}-t`}>{p.title}</h2>
+            <p class="dlg__price">{formatINR(p.price)}</p>
+          </div>
+          <button type="button" class="dlg__close" data-close aria-label="Close">
+            <Icon name="close" />
+          </button>
+        </div>
+        <div class="dlg__rooms">
+          {p.rooms.map((r) => (
+            <section>
+              <h3>{r.name}</h3>
+              <ul role="list">
+                {r.items.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+        <div class="dlg__foot">
+          <a class="btn" href={`/contact?package=${p.id}#enquiry`}>Enquire about {p.name}</a>
+        </div>
+      </dialog>
+    ))
+  }
+</section>
+
+<style>
+  .pk__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 700px) {
+    .pk__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1100px) {
+    .pk__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+  }
+  .white .card:not(.card--custom) {
+    background: var(--cream);
+  }
+  .card__media {
+    aspect-ratio: 4 / 3;
+  }
+  .card__media :global(img) {
+    transition: transform 1.2s var(--ease-out);
+  }
+  .card:hover .card__media :global(img) {
+    transform: scale(1.04);
+  }
+  .card__tag {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(247, 239, 232, 0.92);
+    color: var(--espresso);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+  }
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  }
+  .card h3 {
+    font-size: var(--fs-lg);
+  }
+  .card__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 1rem 0 1.25rem;
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    line-height: 1;
+    color: var(--mocha);
+  }
+  .card__price span {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+  .card__rooms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  .card__rooms li {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+  .card__note {
+    margin: 1rem 0 1.75rem;
+    font-weight: 300;
+    color: rgba(247, 239, 232, 0.75);
+  }
+  .card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+  .card__actions .btn {
+    min-height: 46px;
+    padding-inline: 1.25rem;
+  }
+  .card.card--custom {
+    background: var(--espresso);
+  }
+
+  /* Inclusions dialog */
+  .dlg {
+    width: min(760px, calc(100vw - 2rem));
+    max-height: min(86dvh, 900px);
+    padding: 0;
+    border: 0;
+    background: var(--cream);
+    color: var(--text);
+  }
+  .dlg::backdrop {
+    background: rgba(40, 26, 19, 0.6);
+    backdrop-filter: blur(4px);
+  }
+  .dlg[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .dlg__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem) clamp(1.5rem, 1rem + 2vw, 2.5rem) 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .dlg__head h2 {
+    font-size: var(--fs-lg);
+  }
+  .dlg__price {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-display);
+    font-size: var(--fs-md);
+    color: var(--sand);
+  }
+  .dlg__close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: none;
+    color: var(--mocha);
+    cursor: pointer;
+  }
+  .dlg__close :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .dlg__rooms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.75rem 2rem;
+    padding: 1.75rem clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    overflow-y: auto;
+  }
+  .dlg__rooms h3 {
+    margin-bottom: 0.6rem;
+    font-size: var(--fs-md);
+  }
+  .dlg__rooms ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.3rem;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+  .dlg__rooms li {
+    padding-left: 1rem;
+    position: relative;
+  }
+  .dlg__rooms li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 5px;
+    height: 5px;
+    background: var(--sand);
+    transform: rotate(45deg);
+  }
+  .dlg__foot {
+    padding: 1.25rem clamp(1.5rem, 1rem + 2vw, 2.5rem) clamp(1.5rem, 1rem + 2vw, 2.25rem);
+    border-top: 1px solid var(--line);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((btn) => {
+    const dlg = document.getElementById(btn.dataset.open!) as HTMLDialogElement | null;
+    if (!dlg) return;
+    btn.addEventListener('click', () => dlg.showModal());
+    dlg.querySelector('[data-close]')?.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => e.target === dlg && dlg.close());
+    dlg.addEventListener('close', () => btn.focus());
+  });
+</script>

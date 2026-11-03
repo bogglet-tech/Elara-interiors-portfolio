@@ -1,0 +1,78 @@
+---
+// Floating WhatsApp button (desktop) + fixed Call / WhatsApp / Estimate bar (mobile, like DLife's mobile bar).
+import Icon from './Icon.astro';
+import { site, whatsappLink } from '../data/site';
+---
+
+<a class="wa" href={whatsappLink()} target="_blank" rel="noopener" aria-label="Chat with Elara Interiors on WhatsApp">
+  <Icon name="whatsapp" />
+</a>
+
+<nav class="mbar" aria-label="Quick contact">
+  <a href={site.phoneHref}><Icon name="phone" />Call</a>
+  <a href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
+  <a href="/contact#enquiry" class="mbar__cta">Free estimate</a>
+</nav>
+
+<style>
+  .wa {
+    position: fixed;
+    right: clamp(1rem, 2vw, 2rem);
+    bottom: clamp(1rem, 2vw, 2rem);
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    box-shadow: 0 12px 28px -12px rgba(63, 42, 31, 0.6);
+    transition: transform 0.25s var(--ease);
+  }
+  .wa:hover {
+    transform: scale(1.06);
+  }
+  .wa :global(svg) {
+    width: 30px;
+    height: 30px;
+  }
+  .mbar {
+    display: none;
+  }
+  @media (max-width: 860px) {
+    .wa {
+      display: none;
+    }
+    .mbar {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 45;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      height: calc(62px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background: var(--cream);
+      box-shadow: 0 -1px 0 var(--line);
+    }
+    .mbar a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      color: var(--espresso);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .mbar :global(svg) {
+      width: 19px;
+      height: 19px;
+      color: var(--mocha);
+    }
+    .mbar__cta {
+      background: var(--mocha);
+      color: var(--cream) !important;
+    }
+  }
+</style>

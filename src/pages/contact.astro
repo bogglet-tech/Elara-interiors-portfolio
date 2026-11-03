@@ -1,0 +1,208 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { site, whatsappLink, fullAddress } from '../data/site';
+import { photos } from '../data/content';
+
+const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.mapQuery)}`;
+---
+
+<Base
+  title="Contact us"
+  description="Contact Elara Interiors for a free estimate on your home interiors. Call, WhatsApp, email or send an enquiry and we'll call you back within one working day."
+>
+  <PageBanner crumb="Contact" title="Let’s talk about your home" intro="Call, message us on WhatsApp, or send the form. We reply within one working day." image={photos.bedroomLamps} />
+
+  <section class="section ct" id="enquiry" aria-label="Enquiry form and contact details">
+    <div class="wrap ct__grid">
+      <div class="ct__form">
+        <h2>Request a free estimate</h2>
+        <p class="lede">A few details are enough. We’ll call to understand your home, then arrange a consultation.</p>
+        <EnquiryForm id="contact-form" />
+      </div>
+
+      <aside class="ct__info dark" aria-label="Contact details">
+        <ul role="list">
+          <li>
+            <Icon name="phone" />
+            <div><h3>Call</h3><a href={site.phoneHref}>{site.phoneDisplay}</a></div>
+          </li>
+          <li>
+            <Icon name="whatsapp" />
+            <div><h3>WhatsApp</h3><a href={whatsappLink()} target="_blank" rel="noopener">Start a chat</a></div>
+          </li>
+          <li>
+            <Icon name="mail" />
+            <div><h3>Email</h3><a href={`mailto:${site.email}`}>{site.email}</a></div>
+          </li>
+          <li>
+            <Icon name="pin" />
+            <div>
+              <h3>Studio</h3>
+              <address>{fullAddress()}</address>
+              <a href={mapLink} target="_blank" rel="noopener">Open in Google Maps</a>
+            </div>
+          </li>
+          <li>
+            <Icon name="clock" />
+            <div>
+              <h3>Hours</h3>
+              <dl>
+                {site.hours.map((h) => (<><dt>{h.days}</dt><dd>{h.time}</dd></>))}
+              </dl>
+            </div>
+          </li>
+        </ul>
+        <div class="ct__social">
+          {site.socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="map-sec white" aria-labelledby="map-title">
+    <h2 id="map-title" class="visually-hidden">Map</h2>
+    <div class="map" data-map data-src={mapSrc}>
+      <div class="map__ph">
+        <p class="map__addr">{fullAddress()}</p>
+        <button type="button" class="btn btn--line" data-map-load>Show map</button>
+        <p class="map__note">Loads Google Maps, which may set cookies.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ct__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 3vw, 5rem);
+    align-items: start;
+  }
+  @media (min-width: 1000px) {
+    .ct__grid {
+      grid-template-columns: 1.3fr 0.7fr;
+    }
+  }
+  .ct__form h2 {
+    margin-bottom: 1rem;
+    font-size: var(--fs-xl);
+  }
+  .ct__form .lede {
+    margin-bottom: 2.5rem;
+  }
+  .ct__info {
+    padding: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+  .ct__info ul {
+    display: grid;
+    gap: 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ct__info li {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 1rem;
+  }
+  .ct__info :global(svg) {
+    width: 22px;
+    height: 22px;
+    margin-top: 0.2rem;
+    color: var(--sand);
+  }
+  .ct__info h3 {
+    margin-bottom: 0.25rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--sand);
+  }
+  .ct__info a {
+    color: var(--cream);
+    text-decoration: none;
+    word-break: break-word;
+  }
+  .ct__info a:hover {
+    text-decoration: underline;
+  }
+  .ct__info address {
+    font-style: normal;
+    color: rgba(247, 239, 232, 0.75);
+    margin-bottom: 0.25rem;
+  }
+  .ct__info dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2rem 1rem;
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: rgba(247, 239, 232, 0.75);
+  }
+  .ct__info dd {
+    margin: 0;
+  }
+  .ct__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 2.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-dark);
+  }
+  .ct__social a {
+    color: var(--cream);
+    font-size: var(--fs-sm);
+  }
+
+  .map {
+    position: relative;
+    height: clamp(360px, 50vh, 520px);
+    background: var(--stone);
+  }
+  .map :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .map__ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+  }
+  .map__ph p {
+    margin: 0;
+  }
+  .map__addr {
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    color: var(--mocha);
+  }
+  .map__note {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+</style>
+
+<script>
+  const map = document.querySelector<HTMLElement>('[data-map]');
+  map?.querySelector('[data-map-load]')?.addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = map.dataset.src!;
+    f.title = 'Map showing the Elara Interiors studio';
+    f.loading = 'lazy';
+    f.referrerPolicy = 'no-referrer-when-downgrade';
+    map.replaceChildren(f);
+  });
+</script>

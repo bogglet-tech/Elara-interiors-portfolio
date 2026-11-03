@@ -1,0 +1,62 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site, fullAddress } from '../data/site';
+---
+
+<Legal title="Privacy Policy" description="How Elara Interiors collects, uses and protects the personal information you share with us." updated="3 November 2026">
+  <p>
+    This policy explains what personal information {site.name} (“we”, “us”) collects through this website, how we use it,
+    and the choices you have. We follow the Digital Personal Data Protection Act, 2023 and other applicable Indian law.
+  </p>
+
+  <h2>Information we collect</h2>
+  <ul>
+    <li>Details you give us in the enquiry form: your name, phone number, email address, type of home, requirement and message.</li>
+    <li>Information you share when you call, email or message us on WhatsApp.</li>
+    <li>Basic technical data your browser sends, such as device type and pages visited, used to keep the site working well.</li>
+  </ul>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li>To reply to your enquiry and arrange a consultation.</li>
+    <li>To prepare designs, quotations and carry out your project.</li>
+    <li>To provide after-sales service.</li>
+    <li>To meet legal, tax and accounting requirements.</li>
+  </ul>
+  <p>We do not sell or rent your personal information.</p>
+
+  <h2>Sharing</h2>
+  <p>
+    We share information only with service providers who help us run the business (for example email, hosting and
+    messaging services), and only as much as they need to do that work, or when the law requires it.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    The contact page can load a Google Maps view only after you choose to show it. WhatsApp links open WhatsApp, which is
+    governed by its own privacy policy.
+  </p>
+
+  <h2>How long we keep it</h2>
+  <p>
+    We keep enquiry details for as long as needed to respond and, if you become a client, for the duration of your project
+    and any period required by law.
+  </p>
+
+  <h2>Your rights</h2>
+  <p>
+    You can ask to see, correct or delete the personal information we hold about you, or withdraw consent for us to use it.
+    Contact us using the details below and we’ll respond within a reasonable time.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    {site.name}<br />
+    {fullAddress()}<br />
+    Email: <a href={`mailto:${site.email}`}>{site.email}</a><br />
+    Phone: <a href={site.phoneHref}>{site.phoneDisplay}</a>
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>We may update this policy from time to time. The date at the top shows when it last changed.</p>
+</Legal>

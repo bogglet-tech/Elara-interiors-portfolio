@@ -1,0 +1,56 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+
+<Legal title="Terms & Conditions" description="Terms for using the Elara Interiors website and our interior design packages." updated="3 November 2026">
+  <p>
+    These terms apply to your use of this website, operated by {site.name}. By using the site you agree to them. The
+    contract for any interior project is the written quotation or agreement we sign with you, which takes priority over
+    these terms.
+  </p>
+
+  <h2>Information on this website</h2>
+  <p>
+    We work to keep information on this site accurate, but it is provided for general guidance. Photographs show
+    representative designs and finishes; actual materials, colours and dimensions are confirmed in your project drawings
+    and quotation.
+  </p>
+
+  <h2>Packages and pricing</h2>
+  <ul>
+    <li>Package prices are in Indian Rupees and cover the items listed for each package.</li>
+    <li>Work outside the listed items, changes in size or specification, and site conditions may change the final price.</li>
+    <li>The final scope, price, payment schedule and timeline are set out in your written quotation.</li>
+  </ul>
+
+  <h2>Enquiries</h2>
+  <p>
+    Sending an enquiry does not create a contract or obligation for either side. We’ll use your details as described in our
+    <a href="/privacy-policy">Privacy Policy</a>.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    The Elara Interiors name, logo, text and design work on this site belong to {site.name} or its licensors. Please don’t
+    copy or reuse them without written permission.
+  </p>
+
+  <h2>Links to other sites</h2>
+  <p>Links to third-party sites such as WhatsApp, Google Maps or social media are provided for convenience. We aren’t responsible for their content.</p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    To the extent the law allows, {site.name} is not liable for any loss arising from use of this website. Nothing in these
+    terms limits rights you have under the Consumer Protection Act, 2019.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>These terms are governed by the laws of India.</p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about these terms? Email <a href={`mailto:${site.email}`}>{site.email}</a> or call
+    <a href={site.phoneHref}>{site.phoneDisplay}</a>.
+  </p>
+</Legal>

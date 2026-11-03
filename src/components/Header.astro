@@ -1,0 +1,333 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import logoWhite from '../assets/brand/logo-white.png';
+import Icon from './Icon.astro';
+import { site, nav, whatsappLink } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="hdr" data-header>
+  <div class="wrap hdr__in">
+    <a href="/" class="hdr__logo" aria-label="Elara Interiors home">
+      <Image src={logo} alt="" width={176} densities={[1, 2]} loading="eager" />
+    </a>
+
+    <nav class="hdr__nav" aria-label="Main">
+      <ul role="list">
+        {
+          nav.map((n) => (
+            <li>
+              <a href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="hdr__cta">
+      <a class="hdr__phone" href={site.phoneHref}><Icon name="phone" /><span>{site.phoneDisplay}</span></a>
+      <a class="btn" href="/contact#enquiry">Free estimate</a>
+    </div>
+
+    <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu" data-menu-open>
+      <span></span><span></span>
+      <span class="visually-hidden">Open menu</span>
+    </button>
+  </div>
+</header>
+
+<div class="menu dark" id="menu" role="dialog" aria-modal="true" aria-label="Menu" data-menu hidden>
+  <div class="wrap menu__top">
+    <Image src={logoWhite} alt="Elara Interiors" width={150} densities={[1, 2]} />
+    <button type="button" class="menu__close" data-menu-close>
+      <Icon name="close" /><span class="visually-hidden">Close menu</span>
+    </button>
+  </div>
+  <nav class="wrap menu__nav" aria-label="Mobile">
+    <ol role="list">
+      {
+        nav.map((n) => (
+          <li>
+            <a href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>
+              {n.label}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+  <div class="wrap menu__foot">
+    <a class="btn btn--sand" href="/contact#enquiry">Get a free estimate</a>
+    <a class="btn btn--ghost-light" href={whatsappLink()} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
+    <a class="menu__line" href={site.phoneHref}>{site.phoneDisplay}</a>
+    <a class="menu__line" href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+</div>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--cream);
+    transition:
+      box-shadow 0.3s var(--ease),
+      background-color 0.3s var(--ease);
+  }
+  .hdr[data-scrolled] {
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .hdr__in {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    height: var(--header-h);
+  }
+  .hdr__logo img {
+    width: clamp(128px, 8vw + 60px, 168px);
+    height: auto;
+  }
+  .hdr__nav ul {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.5rem, 2.6vw, 2.75rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hdr__nav a {
+    position: relative;
+    padding-block: 0.5rem;
+    color: var(--espresso);
+    font-size: var(--fs-sm);
+    font-weight: 450;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .hdr__nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--mocha);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s var(--ease);
+  }
+  .hdr__nav a:hover::after,
+  .hdr__nav a[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .hdr__cta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .hdr__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--mocha);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .hdr__phone :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .hdr__cta .btn {
+    min-height: 46px;
+    padding-inline: 1.4rem;
+  }
+
+  .hdr__burger {
+    display: none;
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin-right: -8px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .hdr__burger span:not(.visually-hidden) {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1.5px;
+    background: var(--espresso);
+  }
+  .hdr__burger span:nth-child(1) {
+    top: 19px;
+  }
+  .hdr__burger span:nth-child(2) {
+    top: 28px;
+    left: 20px;
+  }
+
+  @media (max-width: 1100px) {
+    .hdr__phone span {
+      display: none;
+    }
+  }
+  @media (max-width: 960px) {
+    .hdr__in {
+      grid-template-columns: 1fr auto;
+      height: 72px;
+    }
+    .hdr__nav,
+    .hdr__cta {
+      display: none;
+    }
+    .hdr__burger {
+      display: block;
+    }
+  }
+
+  /* Mobile menu */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 72px;
+  }
+  .menu__top img {
+    width: 128px;
+    height: auto;
+  }
+  .menu__close {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-right: -8px;
+    border: 0;
+    background: none;
+    color: var(--cream);
+    cursor: pointer;
+  }
+  .menu__close :global(svg) {
+    width: 26px;
+    height: 26px;
+  }
+  .menu__nav {
+    flex: 1;
+    padding-block: 2rem;
+  }
+  .menu__nav ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .menu__nav li {
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .menu__nav a {
+    display: block;
+    padding-block: 0.9rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 1.1;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  .menu__nav a[aria-current='page'] {
+    color: var(--sand);
+  }
+  .menu__foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .menu__line {
+    flex-basis: 100%;
+    color: rgba(247, 239, 232, 0.75);
+    text-decoration: none;
+  }
+  .menu__line:first-of-type {
+    margin-top: 1rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .menu:not([hidden]) {
+      animation: menu-in 0.45s var(--ease-out);
+    }
+    .menu:not([hidden]) .menu__nav li {
+      animation: menu-item 0.6s var(--ease-out) both;
+    }
+    .menu__nav li:nth-child(2) {
+      animation-delay: 0.04s !important;
+    }
+    .menu__nav li:nth-child(3) {
+      animation-delay: 0.08s !important;
+    }
+    .menu__nav li:nth-child(4) {
+      animation-delay: 0.12s !important;
+    }
+    .menu__nav li:nth-child(5) {
+      animation-delay: 0.16s !important;
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes menu-item {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const menu = document.querySelector<HTMLElement>('[data-menu]')!;
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+  const closeBtn = menu.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+
+  const setOpen = (open: boolean) => {
+    menu.hidden = !open;
+    openBtn.setAttribute('aria-expanded', String(open));
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    (open ? closeBtn : openBtn).focus();
+  };
+  openBtn.addEventListener('click', () => setOpen(true));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  menu.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+    if (e.key === 'Tab') {
+      const f = [...menu.querySelectorAll<HTMLElement>('a, button')];
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  matchMedia('(min-width: 961px)').addEventListener('change', (e) => e.matches && !menu.hidden && setOpen(false));
+
+  const onScroll = () => header.toggleAttribute('data-scrolled', scrollY > 10);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>

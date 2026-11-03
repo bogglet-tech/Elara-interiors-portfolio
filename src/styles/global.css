@@ -1,0 +1,320 @@
+/* Elara Interiors v2: "the brand book, as a website".
+   Cream pages, mocha type, espresso bands, sand accent. Bodoni Moda display + Jost body. */
+
+:root {
+  --cream: #f7efe8;
+  --cream-deep: #efe3d8;
+  --mocha: #674230;
+  --espresso: #3f2a1f;
+  --sand: #bc9a77;
+  --stone: #dedfda;
+  --white: #ffffff;
+
+  --text: var(--espresso);
+  --muted: #7a6355;
+  --line: rgba(103, 66, 48, 0.16);
+  --line-dark: rgba(247, 239, 232, 0.16);
+
+  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --font-body: 'Jost Variable', 'Jost', system-ui, sans-serif;
+
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.3125rem;
+  --fs-lg: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --fs-xl: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  --fs-2xl: clamp(2.6rem, 1.6rem + 4vw, 4.75rem);
+  --fs-hero: clamp(3rem, 1.4rem + 6.4vw, 7rem);
+
+  --gutter: clamp(1.25rem, 0.5rem + 3.2vw, 4rem);
+  --max: 1320px;
+  --section: clamp(4.5rem, 3rem + 6vw, 9rem);
+  --header-h: 84px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+}
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--mocha);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+h2 {
+  font-size: var(--fs-2xl);
+}
+h3 {
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+}
+p {
+  margin: 0 0 1em;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+a {
+  color: inherit;
+}
+::selection {
+  background: var(--sand);
+  color: var(--espresso);
+}
+
+:focus-visible {
+  outline: 2px solid var(--mocha);
+  outline-offset: 3px;
+}
+.dark :focus-visible {
+  outline-color: var(--sand);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--espresso);
+  color: var(--cream);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Layout ---------- */
+.wrap {
+  width: 100%;
+  max-width: calc(var(--max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section {
+  padding-block: var(--section);
+}
+.dark {
+  background: var(--espresso);
+  color: var(--cream);
+}
+.dark h2,
+.dark h3 {
+  color: var(--cream);
+}
+.mocha {
+  background: var(--mocha);
+  color: var(--cream);
+}
+.white {
+  background: var(--white);
+}
+
+.lede {
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 44ch;
+}
+.dark .lede {
+  color: rgba(247, 239, 232, 0.72);
+}
+
+/* Section heading: big serif left, short intro + link right (brand book "Our Logo" slide) */
+.head {
+  display: grid;
+  gap: 1.5rem 4rem;
+  margin-bottom: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+}
+@media (min-width: 900px) {
+  .head {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: end;
+  }
+}
+.head p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 300;
+}
+.dark .head p {
+  color: rgba(247, 239, 232, 0.72);
+}
+.head__aside {
+  display: grid;
+  gap: 1.25rem;
+  justify-items: start;
+  padding-bottom: 0.4rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  --bg: var(--mocha);
+  --fg: var(--cream);
+  --bd: var(--mocha);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 52px;
+  padding: 0.85rem 1.75rem;
+  border: 1px solid var(--bd);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 500 var(--fs-sm) / 1 var(--font-body);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+.btn:hover {
+  --bg: var(--espresso);
+  --bd: var(--espresso);
+}
+.btn--line {
+  --bg: transparent;
+  --fg: var(--mocha);
+  --bd: rgba(103, 66, 48, 0.4);
+}
+.btn--line:hover {
+  --bg: var(--mocha);
+  --fg: var(--cream);
+  --bd: var(--mocha);
+}
+.btn--sand {
+  --bg: var(--sand);
+  --fg: var(--espresso);
+  --bd: var(--sand);
+}
+.btn--sand:hover {
+  --bg: var(--cream);
+  --bd: var(--cream);
+  --fg: var(--espresso);
+}
+.btn--ghost-light {
+  --bg: transparent;
+  --fg: var(--cream);
+  --bd: rgba(247, 239, 232, 0.45);
+}
+.btn--ghost-light:hover {
+  --bg: var(--cream);
+  --fg: var(--espresso);
+  --bd: var(--cream);
+}
+.btn svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid currentColor;
+  color: var(--mocha);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: gap 0.3s var(--ease);
+}
+.link:hover {
+  gap: 0.9rem;
+}
+.dark .link {
+  color: var(--sand);
+}
+
+/* ---------- Photo reveal (one effect, used only on editorial photos) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.3s var(--ease-out);
+  }
+  .js [data-reveal] img {
+    transform: scale(1.12);
+    transition: transform 1.8s var(--ease-out);
+  }
+  .js [data-reveal].is-in {
+    clip-path: inset(0 0 0 0);
+  }
+  .js [data-reveal].is-in img {
+    transform: none;
+  }
+}
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  background: var(--cream-deep);
+}
+.cover > picture {
+  position: absolute;
+  inset: 0;
+}
+.cover img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

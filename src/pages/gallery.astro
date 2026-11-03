@@ -1,0 +1,314 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ConsultBand from '../components/ConsultBand.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { gallery, galleryRooms, photos } from '../data/content';
+
+const items = await Promise.all(
+  gallery.map(async (g) => ({
+    ...g,
+    large: (await getImage({ src: g.image, width: 1600, format: 'webp' })).src,
+  })),
+);
+const rooms = galleryRooms.filter((r) => gallery.some((g) => g.room === r));
+---
+
+<Base
+  title="Gallery"
+  description="Interior design gallery from Elara Interiors: living rooms, modular kitchens, bedrooms, dining areas, wardrobes and home offices."
+  ogImage={photos.goldenLiving}
+>
+  <PageBanner crumb="Gallery" title="Rooms we’ve put together" intro="Living rooms, kitchens, bedrooms and more. Pick a room to narrow the view, and select a photo to see it larger." image={photos.goldenLiving} />
+
+  <section class="g-head">
+    <div class="wrap">
+      <div class="chips" role="group" aria-label="Filter by room" data-chips>
+        <button type="button" class="chip" aria-pressed="true" data-filter="all">All rooms</button>
+        {
+          rooms.map((r) => (
+            <button type="button" class="chip" aria-pressed="false" data-filter={r}>
+              {r}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="g-body" aria-label="Photos">
+    <div class="wrap">
+      <ul class="grid" role="list" data-grid>
+        {
+          items.map((g, i) => (
+            <li class="grid__item" data-room={g.room}>
+              <button type="button" class="grid__btn" data-index={i} data-large={g.large} data-caption={g.caption} data-alt={g.alt}>
+                <Picture
+                  src={g.image}
+                  alt={g.alt}
+                  widths={[360, 560, 800]}
+                  sizes="(min-width: 1100px) 400px, (min-width: 640px) 46vw, 92vw"
+                  formats={['avif', 'webp']}
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                />
+                <span class="grid__cap">
+                  {g.caption}
+                  <span class="grid__room">{g.room}</span>
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="g-note" data-empty hidden>No photos in this room yet.</p>
+    </div>
+  </section>
+
+  <dialog class="lb dark" aria-label="Photo viewer" data-lightbox>
+    <figure class="lb__fig">
+      <img alt="" data-lb-img />
+      <figcaption data-lb-cap></figcaption>
+    </figure>
+    <button type="button" class="lb__btn lb__close" data-lb-close aria-label="Close photo viewer"><Icon name="close" /></button>
+    <button type="button" class="lb__btn lb__prev" data-lb-prev aria-label="Previous photo"><Icon name="prev" /></button>
+    <button type="button" class="lb__btn lb__next" data-lb-next aria-label="Next photo"><Icon name="next" /></button>
+  </dialog>
+
+  <ConsultBand title="Like what you see?" text="Tell us which rooms you’d like to transform and we’ll call you back within one working day." image={photos.bedroomSlats} />
+</Base>
+
+<style>
+  .g-head {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 5;
+    padding-block: 1.25rem;
+    background: var(--cream);
+    box-shadow: 0 1px 0 var(--line);
+    margin-bottom: 2.5rem;
+  }
+  @media (max-width: 960px) {
+    .g-head {
+      top: 72px;
+    }
+  }
+  .chips {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chip {
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--espresso);
+    font: 400 var(--fs-sm) / 1 var(--font-body);
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease),
+      color 0.2s var(--ease);
+  }
+  .chip:hover {
+    border-color: var(--mocha);
+  }
+  .chip[aria-pressed='true'] {
+    background: var(--mocha);
+    border-color: var(--mocha);
+    color: var(--white);
+  }
+
+  .g-body {
+    padding-bottom: var(--section);
+  }
+  .grid {
+    columns: 1;
+    column-gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 640px) {
+    .grid {
+      columns: 2;
+    }
+  }
+  @media (min-width: 1100px) {
+    .grid {
+      columns: 3;
+    }
+  }
+  .grid__item {
+    break-inside: avoid;
+    margin-bottom: 1.25rem;
+  }
+  .grid__item[hidden] {
+    display: none;
+  }
+  .grid__btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: zoom-in;
+    color: inherit;
+    font: inherit;
+  }
+  .grid__btn :global(img) {
+    width: 100%;
+    height: auto;
+    background: var(--cream-deep);
+    transition: opacity 0.3s var(--ease);
+  }
+  .grid__btn:hover :global(img) {
+    opacity: 0.88;
+  }
+  .grid__cap {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.6rem;
+    font-size: var(--fs-sm);
+    color: var(--espresso);
+  }
+  .grid__room {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .lb {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(3.5rem, 7vw, 6rem);
+    border: 0;
+    background: rgba(40, 26, 19, 0.96);
+    color: var(--white);
+  }
+  .lb::backdrop {
+    background: transparent;
+  }
+  .lb[open] {
+    display: grid;
+    place-items: center;
+  }
+  .lb__fig {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    max-height: 100%;
+  }
+  .lb__fig img {
+    max-width: 100%;
+    max-height: calc(100dvh - 9rem);
+    object-fit: contain;
+  }
+  .lb__fig figcaption {
+    font-size: var(--fs-sm);
+    color: #eadfd4;
+  }
+  .lb__btn {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(247, 239, 232, 0.35);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--white);
+    cursor: pointer;
+  }
+  .lb__btn:hover {
+    background: var(--sand);
+    color: var(--mocha-deep);
+  }
+  .lb__btn :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .lb__close {
+    top: 1rem;
+    right: 1rem;
+  }
+  .lb__prev,
+  .lb__next {
+    top: 50%;
+    margin-top: -24px;
+  }
+  .lb__prev {
+    left: 0.75rem;
+  }
+  .lb__next {
+    right: 0.75rem;
+  }
+</style>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-chips] button')];
+  const items = [...document.querySelectorAll<HTMLLIElement>('[data-grid] > li')];
+  const empty = document.querySelector<HTMLElement>('[data-empty]')!;
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter!;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      let shown = 0;
+      items.forEach((li) => {
+        const show = f === 'all' || li.dataset.room === f;
+        li.hidden = !show;
+        if (show) shown++;
+      });
+      empty.hidden = shown > 0;
+    }),
+  );
+
+  // Lightbox: native <dialog> gives focus trapping and Esc-to-close.
+  const dlg = document.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+  const img = dlg.querySelector<HTMLImageElement>('[data-lb-img]')!;
+  const cap = dlg.querySelector<HTMLElement>('[data-lb-cap]')!;
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('.grid__btn')];
+  let current = 0;
+  let opener: HTMLButtonElement | null = null;
+
+  const visible = () => buttons.filter((b) => !b.closest('li')!.hidden);
+  const show = (btn: HTMLButtonElement) => {
+    img.src = btn.dataset.large!;
+    img.alt = btn.dataset.alt!;
+    cap.textContent = btn.dataset.caption!;
+    current = visible().indexOf(btn);
+  };
+  const step = (d: number) => {
+    const v = visible();
+    show(v[(current + d + v.length) % v.length]);
+  };
+
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      opener = b;
+      show(b);
+      dlg.showModal();
+    }),
+  );
+  dlg.querySelector('[data-lb-close]')!.addEventListener('click', () => dlg.close());
+  dlg.querySelector('[data-lb-prev]')!.addEventListener('click', () => step(-1));
+  dlg.querySelector('[data-lb-next]')!.addEventListener('click', () => step(1));
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
+  });
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close();
+  });
+  dlg.addEventListener('close', () => opener?.focus());
+</script>

@@ -1,0 +1,64 @@
+---
+// DRAFT LEGAL TEXT: generic wording for layout purposes. Elara Interiors must review and approve
+// (or supply) the final Privacy Policy and Terms before launch, as stated in the quotation.
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  updated: string;
+}
+const { title, description, updated } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <article class="legal">
+    <div class="wrap legal__wrap">
+      <header>
+        <h1>{title}</h1>
+        <p class="legal__date">Last updated {updated}</p>
+      </header>
+      <div class="legal__body">
+        <slot />
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem) var(--section);
+  }
+  .legal__wrap {
+    max-width: calc(760px + var(--gutter) * 2);
+  }
+  .legal h1 {
+    font-size: var(--fs-2xl);
+    margin-bottom: 0.75rem;
+  }
+  .legal__date {
+    color: var(--muted);
+    font-size: var(--fs-sm);
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .legal__body :global(h2) {
+    font-size: var(--fs-lg);
+    margin: 2.5rem 0 1rem;
+  }
+  .legal__body :global(ul) {
+    padding-left: 1.25rem;
+    margin: 0 0 1em;
+  }
+  .legal__body :global(li) {
+    margin-bottom: 0.4rem;
+  }
+  .legal__body :global(li::marker) {
+    color: var(--sand);
+  }
+  .legal__body :global(a) {
+    color: var(--mocha);
+    font-weight: 600;
+  }
+</style>
