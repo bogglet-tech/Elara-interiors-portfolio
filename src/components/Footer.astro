@@ -80,12 +80,12 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
     font-size: var(--fs-sm);
     color: rgba(247, 239, 232, 0.72);
   }
-  .ftr a {
+  .ftr a:not(.btn) {
     color: inherit;
     text-decoration: none;
     transition: color 0.2s var(--ease);
   }
-  .ftr a:hover {
+  .ftr a:not(.btn):hover {
     color: var(--cream);
   }
   .ftr ul {
@@ -189,14 +189,16 @@ const socialIcon = (label: string) => label.toLowerCase() as 'instagram' | 'face
     left: 50%;
     bottom: 0;
     width: min(calc(100% - var(--gutter)), calc(var(--max) + 22rem));
-    transform: translate(-50%, 6%);
-    opacity: 0.05;
+    /* crop to the ELARA letters only: the gap before "INTERIOS" sits at ~81% of the logo's height */
+    aspect-ratio: 2979 / 688; /* 24-unit top padding + ELARA letters */
+    overflow: hidden;
+    transform: translateX(-50%);
+    opacity: 0.035;
     pointer-events: none;
   }
   @media (max-width: 860px) {
     .ftr__mark {
       bottom: 62px; /* sit above the fixed mobile contact bar */
-      transform: translate(-50%, 0);
     }
   }
   .ftr__base {

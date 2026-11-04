@@ -328,3 +328,131 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Themed dropdowns (src/scripts/custom-select.ts enhances every <select>) ---------- */
+.cs {
+  position: relative;
+}
+.cs__native {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0;
+  pointer-events: none;
+}
+.cs__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid rgb(103 66 48 / 0.35);
+  border-radius: 0;
+  background: transparent;
+  color: var(--espresso);
+  font: 400 1.0625rem / 1.4 var(--font-body);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+.cs__btn:hover,
+.cs.is-open .cs__btn {
+  border-bottom-color: var(--mocha);
+}
+.cs__btn:focus-visible {
+  outline: none;
+  border-bottom: 2px solid var(--mocha);
+  margin-bottom: -1px;
+}
+.cs__value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cs__chev {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--mocha);
+  stroke-width: 1.6;
+  transition: transform 0.3s var(--ease);
+}
+.cs.is-open .cs__chev {
+  transform: rotate(180deg);
+}
+.cs__list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  max-height: 320px;
+  margin: 0;
+  padding: 0.4rem;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 44px -20px rgb(63 42 31 / 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transform-origin: top;
+  transition:
+    opacity 0.2s var(--ease),
+    transform 0.25s var(--ease),
+    visibility 0s linear 0.25s;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sand) transparent;
+}
+.cs--up .cs__list {
+  top: auto;
+  bottom: calc(100% + 8px);
+  transform: translateY(6px);
+  transform-origin: bottom;
+}
+.cs.is-open .cs__list {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.2s var(--ease),
+    transform 0.25s var(--ease);
+}
+.cs__opt {
+  position: relative;
+  padding: 0.7rem 0.9rem 0.7rem 2rem;
+  color: var(--espresso);
+  font-size: 0.975rem;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease);
+}
+.cs__opt.is-active {
+  background: rgb(188 154 119 / 0.2);
+}
+.cs__opt[aria-selected='true'] {
+  color: var(--mocha);
+  font-weight: 500;
+}
+/* the logo's diamond marks the chosen option */
+.cs__opt[aria-selected='true']::before {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--sand);
+  transform: rotate(45deg);
+}
+.cs__opt[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

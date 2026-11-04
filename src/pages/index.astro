@@ -11,10 +11,11 @@ import { site, whatsappLink } from '../data/site';
 import { photos, categories, promises, gallery } from '../data/content';
 
 const slides = [
-  { image: photos.livingDark, caption: 'Living room with a dark feature wall', alt: 'Living room with a dark feature wall, low sofa and framed art' },
   { image: photos.heroTeakBedroom, caption: 'Teak-panelled master bedroom', alt: 'Bedroom with teak wall panelling, warm cove lighting and a dark wooden bed' },
   { image: photos.bedroomSlats, caption: 'Bedroom with wooden wall slats', alt: 'Bedroom with dark wooden wall slats and warm bedside lighting' },
   { image: photos.bedroomSunlit, caption: 'Sunlit guest bedroom', alt: 'Bedroom with wooden floor, low bed and evening sun through tall windows' },
+  { image: photos.goldenLiving, caption: 'Double-height living room', alt: 'Double-height living room with marble floor, cream sectional sofa and golden cove lighting' },
+  { image: photos.livingDark, caption: 'Living room with a dark feature wall', alt: 'Living room with a dark feature wall, low sofa and framed art' },
 ];
 const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], gallery[12]];
 ---
@@ -83,6 +84,39 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     </div>
   </section>
   </div>
+
+  <noscript>
+    <style>
+      /* without JavaScript the logo simply sits in the navbar slot */
+      .fly { opacity: 1 !important; top: calc((var(--header-h) - 42px) / 2) !important; left: 50% !important; transform: translateX(-50%) !important; }
+    </style>
+  </noscript>
+  <!-- Place the flying logo synchronously, before the first paint (the bundled script below runs later).
+       Keep the numbers in step with update() in the module script: 0.4, 0.78/0.5, 760, 0.46. -->
+  <script is:inline>
+    (function () {
+      var f = document.querySelector('[data-fly]'),
+        s = document.querySelector('[data-logo-slot]'),
+        h = document.querySelector('[data-hero]'),
+        w = document.querySelector('[data-hero-wrap]');
+      if (!f || !s || !h || !w) return;
+      var r = s.getBoundingClientRect(),
+        vw = document.documentElement.clientWidth,
+        vh = h.offsetHeight,
+        y = window.scrollY - w.offsetTop,
+        t = Math.min(1, Math.max(0, y / (vh * 0.4))),
+        e = 1 - Math.pow(1 - t, 3),
+        big = Math.min(vw * (vw < 700 ? 0.78 : 0.5), 760),
+        W = big + (r.width - big) * e,
+        H = W * (r.height / r.width),
+        cx = vw / 2 + (r.left + r.width / 2 - vw / 2) * e,
+        cy = vh * 0.46 + (r.top + r.height / 2 - vh * 0.46) * e;
+      f.style.width = W.toFixed(1) + 'px';
+      f.style.transform = 'translate3d(' + (cx - W / 2).toFixed(1) + 'px,' + (cy - H / 2).toFixed(1) + 'px,0)';
+      document.documentElement.style.setProperty('--p', e.toFixed(3));
+      f.setAttribute('data-ready', '');
+    })();
+  </script>
 
   <!-- 2. Stat strip: icon, value, caption -->
   <section class="promise" aria-label="Elara at a glance">
@@ -367,15 +401,15 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     --logo-main: color-mix(in srgb, var(--mocha) calc(var(--h, 0) * 100%), var(--white));
     position: fixed;
     z-index: 60;
-    top: 18px;
-    left: var(--gutter);
-    width: 168px;
+    top: 0;
+    left: 0;
+    width: clamp(120px, 6vw + 60px, 156px);
     transform-origin: 0 0;
-  }
-  :global(.js) .fly:not([data-ready]) {
+    /* hidden until it has been placed (inline script right after the hero), so it can never flash in a corner */
     opacity: 0;
   }
   .fly[data-ready] {
+    opacity: 1;
     transition: opacity 0.6s var(--ease);
   }
 
@@ -1047,8 +1081,8 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
     };
     const measure = () => {
       const r = slot.getBoundingClientRect();
+      if (!r.width) return; // not laid out yet
       S = { l: r.left, t: r.top, w: r.width, h: r.height };
-      Object.assign(fly.style, { left: '0px', top: '0px' });
       update();
     };
     addEventListener('scroll', () => {
@@ -1058,6 +1092,10 @@ const rail = [gallery[2], gallery[5], gallery[8], gallery[6], gallery[10], galle
       }
     }, { passive: true });
     addEventListener('resize', measure);
+    // the navbar slot can shift once web fonts load or the layout settles: keep the logo locked to it
+    document.fonts?.ready.then(measure);
+    new ResizeObserver(measure).observe(slot);
+    addEventListener('load', measure);
     measure();
     fly.setAttribute('data-ready', '');
 

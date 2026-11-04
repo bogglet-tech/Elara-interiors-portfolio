@@ -21,5 +21,7 @@ const svg = raw.replace('<svg ', `<svg class="logo-svg" focusable="false" ${labe
     display: block;
     width: 100%;
     height: auto;
+    overflow: visible; /* never trim the thin INTERIOS strokes at the edge */
+    shape-rendering: geometricPrecision;
   }
 </style>

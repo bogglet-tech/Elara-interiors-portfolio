@@ -120,6 +120,9 @@ const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:l
     <Footer />
     <QuickContact />
     <script>
+      import '../scripts/custom-select';
+    </script>
+    <script>
       // One reveal effect for editorial photos: they unveil top-down as they enter the viewport.
       const els = document.querySelectorAll('[data-reveal]');
       const io = new IntersectionObserver(
